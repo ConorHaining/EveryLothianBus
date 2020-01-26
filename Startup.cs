@@ -1,3 +1,4 @@
+using System;
 using EveryBus.Services;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
 
 namespace EveryBus
 {
@@ -22,7 +24,13 @@ namespace EveryBus
         {
             services.AddRazorPages();
             services.AddControllers();
-            services.AddHttpClient();
+            services.AddHttpClient("polling", client => { })
+            .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(
+               handledEventsAllowedBeforeBreaking: 3,
+               durationOfBreak: TimeSpan.FromSeconds(15)
+            //    onBreak: Stop the service & time, log, report emergency
+            ));
+
             services.AddSingleton<IPollingService, PollingService>();
         }
 

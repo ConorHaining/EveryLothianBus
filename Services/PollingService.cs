@@ -15,7 +15,7 @@ namespace EveryBus.Services
 
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
-            _httpClient = _httpClientFactory.CreateClient();
+            _httpClient = _httpClientFactory.CreateClient("polling");
             address = _configuration.GetValue<Uri>("lothian:address");
 
             Timer = new Timer(_configuration.GetValue<long>("lothian:pollInterval", 150000));
