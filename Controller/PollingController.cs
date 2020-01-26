@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EveryBus.Controller
 {
+    [Controller]
     [Route("api/polling")]
     public class PollingController : ControllerBase
     {

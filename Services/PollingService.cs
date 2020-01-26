@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Timers;
 using EveryBus.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -15,10 +16,10 @@ namespace EveryBus.Services
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
             _httpClient = _httpClientFactory.CreateClient();
-            address = _configuration.GetValue<Uri>("lothian.address");
+            address = _configuration.GetValue<Uri>("lothian:address");
 
-            Timer = new Timer(_configuration.GetValue<long>("lothian.pollInterval", 150000));
-            Timer.Elapsed += Poll;
+            Timer = new Timer(_configuration.GetValue<long>("lothian:pollInterval", 150000));
+            Timer.Elapsed += PollAsync;
             Timer.AutoReset = true;
             Timer.Enabled = true;
         }
@@ -49,10 +50,10 @@ namespace EveryBus.Services
             return PollingStatus.Stopped;
         }
 
-        private void Poll(object source, ElapsedEventArgs e)
+        private async void PollAsync(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime);
-            var result = _httpClient.GetAsync(address);
+            var result = await _httpClient.GetAsync(address);
         }
     }
 }
