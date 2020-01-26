@@ -1,7 +1,10 @@
-public enum PollingStatus
+namespace EveryBus.Services.Interfaces
 {
-    Started,
-    Running,
-    Stopped,
-    Errored,
+    public enum PollingStatus
+    {
+        Started,
+        Running,
+        Stopped,
+        Errored,
+    }
 }

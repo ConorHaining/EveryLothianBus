@@ -1,6 +1,9 @@
-public interface IPollingService
+namespace EveryBus.Services.Interfaces
 {
-    PollingStatus Start();
-    PollingStatus Stop();
-    PollingStatus Status();
+    public interface IPollingService
+    {
+        PollingStatus Start();
+        PollingStatus Stop();
+        PollingStatus Status();
+    }
 }

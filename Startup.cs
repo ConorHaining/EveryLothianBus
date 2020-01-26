@@ -1,3 +1,5 @@
+using EveryBus.Services;
+using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +22,7 @@ namespace EveryBus
         {
             services.AddRazorPages();
             services.AddControllers();
+            services.AddHttpClient();
             services.AddSingleton<IPollingService, PollingService>();
         }
 
