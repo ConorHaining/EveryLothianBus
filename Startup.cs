@@ -1,5 +1,4 @@
 using System;
-using BooksApi.Models;
 using EveryBus.Services;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Polly;
 
 namespace EveryBus
@@ -25,12 +23,6 @@ namespace EveryBus
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.Configure<MongoDbSettings>(
-                Configuration.GetSection(nameof(MongoDbSettings))
-            );
-            services.AddSingleton<IMongoDbSettings>(sp => 
-                sp.GetRequiredService<IOptions<MongoDbSettings>>().Value
-            );
 
             services.AddControllers();
             services.AddHttpClient("polling", client => { })
