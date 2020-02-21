@@ -1,19 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Timers;
-using EveryBus.Models;
+using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System.Text.Json;
-using System.Linq;
 
 namespace EveryBus.Services
 {
-    public class PollingService : IPollingService
+    public class PollingService : IPollingService, IObservable<VehicleLocation>
     {
         private readonly HttpClient _httpClient;
         private readonly Uri address;
         private Timer Timer;
+        private List<IObserver<VehicleLocation>> observers;
 
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
@@ -24,6 +24,8 @@ namespace EveryBus.Services
             Timer.Elapsed += PollAsync;
             Timer.AutoReset = true;
             Timer.Enabled = true;
+
+            observers = new List<IObserver<VehicleLocation>>();
         }
 
         public PollingStatus Start()
@@ -52,22 +54,38 @@ namespace EveryBus.Services
             return PollingStatus.Stopped;
         }
 
+        public IDisposable Subscribe(IObserver<VehicleLocation> observer)
+        {
+            if (!observers.Contains(observer))
+            {
+                observers.Add(observer);
+            }
+
+            return new Unsubscriber(observers, observer);
+        }
+
         private async void PollAsync(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime);
             var result = await _httpClient.GetAsync(address);
             result.EnsureSuccessStatusCode();
+        }
+    }
 
-            var jsonString = await result.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions
-            {
-                
-            };
-            var locations = JsonSerializer.Deserialize<VehicleLocationsResponse>(jsonString, options);
+    internal class Unsubscriber : IDisposable
+    {
+        private List<IObserver<VehicleLocation>> _observers;
+        private IObserver<VehicleLocation> _observer;
 
-            if (locations.vehicles != null) {
-                Console.WriteLine($"Received {locations.vehicles.Count()} location records.");
-            }
+        public Unsubscriber(List<IObserver<VehicleLocation>> observers, IObserver<VehicleLocation> observer)
+        {
+            this._observers = observers;
+            this._observer = observer;
+        }
+
+        public void Dispose()
+        {
+            if (!(_observer == null)) _observers.Remove(_observer);
         }
     }
 }
