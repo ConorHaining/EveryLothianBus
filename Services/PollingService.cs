@@ -8,36 +8,36 @@ using Microsoft.Extensions.Configuration;
 
 namespace EveryBus.Services
 {
-    public class PollingService : IPollingService, IObservable<VehicleLocation>
+    public class PollingService : IPollingService
     {
         private readonly HttpClient _httpClient;
         private readonly Uri address;
-        private Timer Timer;
-        private List<IObserver<VehicleLocation>> observers;
+        private Timer _timer;
+        private List<IObserver<VehicleLocation>> _observers;
 
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
             _httpClient = _httpClientFactory.CreateClient("polling");
             address = _configuration.GetValue<Uri>("lothian:address");
 
-            Timer = new Timer(_configuration.GetValue<long>("lothian:pollInterval", 150000));
-            Timer.Elapsed += PollAsync;
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
+            _timer = new Timer(_configuration.GetValue<long>("lothian:pollInterval", 150000));
+            _timer.Elapsed += PollAsync;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
 
-            observers = new List<IObserver<VehicleLocation>>();
+            _observers = new List<IObserver<VehicleLocation>>();
         }
 
         public PollingStatus Start()
         {
-            Timer.Start();
-            Timer.Enabled = true;
+            _timer.Start();
+            _timer.Enabled = true;
             return PollingStatus.Started;
         }
 
         public PollingStatus Status()
         {
-            if (Timer.Enabled)
+            if (_timer.Enabled)
             {
                 return PollingStatus.Running;
             }
@@ -49,19 +49,19 @@ namespace EveryBus.Services
 
         public PollingStatus Stop()
         {
-            Timer.Stop();
-            Timer.Enabled = false;
+            _timer.Stop();
+            _timer.Enabled = false;
             return PollingStatus.Stopped;
         }
 
         public IDisposable Subscribe(IObserver<VehicleLocation> observer)
         {
-            if (!observers.Contains(observer))
+            if (!_observers.Contains(observer))
             {
-                observers.Add(observer);
+                _observers.Add(observer);
             }
 
-            return new Unsubscriber(observers, observer);
+            return new Unsubscriber(_observers, observer);
         }
 
         private async void PollAsync(object source, ElapsedEventArgs e)
