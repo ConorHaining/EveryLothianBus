@@ -75,8 +75,8 @@ namespace EveryBus.Services
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
-            var vehicleUpdates = await result.Content.ReadAsStreamAsync();
-            var vehicleUpdatesJson = await JsonSerializer.DeserializeAsync<VehicleLocationResponse>(vehicleUpdates, jsonOptions);
+            var vehicleUpdates = await result.Content.ReadAsStringAsync();
+            var vehicleUpdatesJson = JsonSerializer.Deserialize<VehicleLocationResponse>(vehicleUpdates, jsonOptions);
 
             foreach (var update in vehicleUpdatesJson.vehicleLocations)
             {
