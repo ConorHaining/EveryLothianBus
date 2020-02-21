@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EveryBus.Domain
 {
-    class BusContext : DbContext
+    public class BusContext : DbContext
     {
         public DbSet<Point> Points { get; set; }
         public DbSet<Route> Routes { get; set; }
