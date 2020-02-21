@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Timers;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
@@ -69,6 +70,21 @@ namespace EveryBus.Services
             Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime);
             var result = await _httpClient.GetAsync(address);
             result.EnsureSuccessStatusCode();
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var vehicleUpdates = await result.Content.ReadAsStreamAsync();
+            var vehicleUpdatesJson = await JsonSerializer.DeserializeAsync<VehicleLocationResponse>(vehicleUpdates, jsonOptions);
+
+            foreach (var update in vehicleUpdatesJson.vehicleLocations)
+            {
+                foreach (var observer in _observers)
+                {
+                    observer.OnNext(update);
+                }
+            }
         }
     }
 
