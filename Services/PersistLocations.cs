@@ -11,12 +11,13 @@ namespace EveryBus.Services
         private readonly BusContext _busContext;
         private readonly IPollingService _pollingService;
         private IDisposable unsubscriber;
-        private readonly Dictionary<String, VehicleLocation> latest;
+        private readonly Dictionary<String, VehicleLocation> _latest;
         
         public PersistLocations(BusContext busContext, IPollingService pollingService)
         {
             _busContext = busContext;
             _pollingService = pollingService;
+            _latest = new Dictionary<string, VehicleLocation>();
 
             unsubscriber = _pollingService.Subscribe(this);
         }
@@ -33,7 +34,7 @@ namespace EveryBus.Services
 
         public void OnNext(VehicleLocation vehicle)
         {
-            var hasRecord = latest.ContainsValue(vehicle);
+            var hasRecord = _latest.ContainsValue(vehicle);
 
             if (hasRecord)
             {
@@ -41,7 +42,7 @@ namespace EveryBus.Services
                 _busContext.SaveChanges();
 
                 var id = vehicle.Id;
-                latest.Add(id, vehicle);
+                _latest.Add(id, vehicle);
             }
         }
 
