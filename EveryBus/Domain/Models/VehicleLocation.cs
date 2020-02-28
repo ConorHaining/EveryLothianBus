@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace EveryBus.Domain.Models
 {
     public class VehicleLocation
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
         [JsonPropertyName("vehicle_id")]
