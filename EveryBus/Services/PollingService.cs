@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Timers;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
+using EveryBus.Utility.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace EveryBus.Services
@@ -13,20 +14,20 @@ namespace EveryBus.Services
     {
         private readonly HttpClient _httpClient;
         private readonly Uri address;
-        private Timer _timer;
-        private List<IObserver<VehicleLocation>> _observers;
+        private ITimer _timer;
+        private List<IObserver<VehicleLocation[]>> _observers;
 
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
             _httpClient = _httpClientFactory.CreateClient("polling");
             address = _configuration.GetValue<Uri>("lothian:address");
 
-            _timer = new Timer(_configuration.GetValue<long>("lothian:pollInterval", 150000));
+            _timer = new TimerAdapter(_configuration.GetValue<long>("lothian:pollInterval", 150000));
             _timer.Elapsed += PollAsync;
             _timer.AutoReset = true;
             _timer.Enabled = true;
 
-            _observers = new List<IObserver<VehicleLocation>>();
+            _observers = new List<IObserver<VehicleLocation[]>>();
         }
 
         public PollingStatus Start()
@@ -55,7 +56,7 @@ namespace EveryBus.Services
             return PollingStatus.Stopped;
         }
 
-        public IDisposable Subscribe(IObserver<VehicleLocation> observer)
+        public IDisposable Subscribe(IObserver<VehicleLocation[]> observer)
         {
             if (!_observers.Contains(observer))
             {
@@ -78,22 +79,19 @@ namespace EveryBus.Services
             var vehicleUpdates = await result.Content.ReadAsStringAsync();
             var vehicleUpdatesJson = JsonSerializer.Deserialize<VehicleLocationResponse>(vehicleUpdates, jsonOptions);
 
-            foreach (var update in vehicleUpdatesJson.vehicleLocations)
+            foreach (var observer in _observers)
             {
-                foreach (var observer in _observers)
-                {
-                    observer.OnNext(update);
-                }
+                observer.OnNext(vehicleUpdatesJson.vehicleLocations);
             }
         }
     }
 
     internal class Unsubscriber : IDisposable
     {
-        private List<IObserver<VehicleLocation>> _observers;
-        private IObserver<VehicleLocation> _observer;
+        private List<IObserver<VehicleLocation[]>> _observers;
+        private IObserver<VehicleLocation[]> _observer;
 
-        public Unsubscriber(List<IObserver<VehicleLocation>> observers, IObserver<VehicleLocation> observer)
+        public Unsubscriber(List<IObserver<VehicleLocation[]>> observers, IObserver<VehicleLocation[]> observer)
         {
             this._observers = observers;
             this._observer = observer;

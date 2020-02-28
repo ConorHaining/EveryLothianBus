@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
 {
-    public class PersistLocations : IObserver<VehicleLocation>
+    public class PersistLocations : IObserver<VehicleLocation[]>
     {
-        private readonly BusContext _busContext;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IPollingService _pollingService;
         private IDisposable unsubscriber;
         private readonly Dictionary<String, VehicleLocation> _latest;
-        
-        public PersistLocations(BusContext busContext, IPollingService pollingService)
+
+        public PersistLocations(IServiceScopeFactory scopeFactory, IPollingService pollingService)
         {
-            _busContext = busContext;
+            _scopeFactory = scopeFactory;
             _pollingService = pollingService;
             _latest = new Dictionary<string, VehicleLocation>();
 
@@ -32,17 +33,32 @@ namespace EveryBus.Services
             //
         }
 
-        public void OnNext(VehicleLocation vehicle)
+        public void OnNext(VehicleLocation[] vehicleUpdates)
         {
-            var hasRecord = _latest.ContainsValue(vehicle);
-
-            if (hasRecord)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                _busContext.VehicleLocations.Add(vehicle);
-                _busContext.SaveChanges();
+                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
+                foreach (var update in vehicleUpdates)
+                {
+                    var vehicleId = update.VehicleId;
+                    VehicleLocation existingRecord;
+                    var recordExists = _latest.TryGetValue(vehicleId, out existingRecord);
 
-                var id = vehicle.Id;
-                _latest.Add(id, vehicle);
+                    if (!recordExists)
+                    {
+                        busContext.VehicleLocations.Add(update);
+                        _latest.TryAdd(vehicleId, update);
+                    }
+
+                    if (update.LastGpsFix > existingRecord?.LastGpsFix)
+                    {
+                        busContext.VehicleLocations.Add(update);
+                        _latest[vehicleId] = update;
+                    }
+
+                }
+
+                busContext.SaveChanges();
             }
         }
 
