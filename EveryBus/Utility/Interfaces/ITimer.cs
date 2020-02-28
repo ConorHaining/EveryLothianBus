@@ -6,6 +6,8 @@ namespace EveryBus.Utility.Interfaces
     {
         event ElapsedEventHandler Elapsed;
         double Interval { get; set; }
+        bool Enabled { get; set; }
+        bool AutoReset { get; set; }
         void Dispose();
         void Start();
         void Stop();
