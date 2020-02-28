@@ -1,4 +1,6 @@
 using System;
+using EveryBus.Domain;
+using EveryBus.Domain.Models;
 using EveryBus.Services;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +35,8 @@ namespace EveryBus
             ));
 
             services.AddSingleton<IPollingService, PollingService>();
+            services.AddDbContext<BusContext>(ServiceLifetime.Singleton);
+            services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +65,9 @@ namespace EveryBus
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
             });
+
+            app.ApplicationServices.GetService<IPollingService>();
+            app.ApplicationServices.GetService<IObserver<VehicleLocation[]>>();
         }
     }
 }
