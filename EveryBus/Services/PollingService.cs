@@ -69,8 +69,18 @@ namespace EveryBus.Services
         private async void PollAsync(object source, ElapsedEventArgs e)
         {
             Console.WriteLine("The Elapsed event was raised at {0}", e.SignalTime);
-            var result = await _httpClient.GetAsync(address);
-            result.EnsureSuccessStatusCode();
+            
+            HttpResponseMessage result;
+            try
+            {
+                result = await _httpClient.GetAsync(address);
+                result.EnsureSuccessStatusCode();
+            }
+            catch (System.Exception error)
+            {
+                Console.WriteLine(error.Message);
+                return;
+            }
 
             var jsonOptions = new JsonSerializerOptions
             {
