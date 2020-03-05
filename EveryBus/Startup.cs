@@ -5,6 +5,7 @@ using EveryBus.Services;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,12 +36,15 @@ namespace EveryBus
             ));
 
             services.AddSingleton<IPollingService, PollingService>();
-            services.AddDbContext<BusContext>(ServiceLifetime.Singleton);
+            services.AddDbContext<BusContext>(
+                ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
+                // ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"),
+                ServiceLifetime.Singleton, ServiceLifetime.Singleton);
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BusContext busContext)
         {
             if (env.IsDevelopment())
             {
@@ -68,6 +72,8 @@ namespace EveryBus
 
             app.ApplicationServices.GetService<IPollingService>();
             app.ApplicationServices.GetService<IObserver<VehicleLocation[]>>();
+
+            busContext.Database.Migrate();
         }
     }
 }
