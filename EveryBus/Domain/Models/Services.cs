@@ -1,8 +1,12 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace EveryBus.Domain.Models
 {
     public class BusServices
     {
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
         
         public string Name;
 

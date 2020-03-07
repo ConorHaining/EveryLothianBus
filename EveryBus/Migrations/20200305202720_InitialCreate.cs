@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EveryBus.Migrations
 {
@@ -10,7 +11,7 @@ namespace EveryBus.Migrations
                 name: "Services",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     ServiceType = table.Column<string>(nullable: true)
                 },
@@ -23,7 +24,7 @@ namespace EveryBus.Migrations
                 name: "VehicleLocations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
                     VehicleId = table.Column<string>(nullable: true),
                     LastGpsFix = table.Column<int>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
@@ -45,9 +46,9 @@ namespace EveryBus.Migrations
                 name: "Routes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
                     Destination = table.Column<string>(nullable: true),
-                    BusServicesId = table.Column<string>(nullable: true)
+                    BusServicesId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,11 +65,11 @@ namespace EveryBus.Migrations
                 name: "Points",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
                     StopId = table.Column<int>(nullable: false),
                     Latitude = table.Column<long>(nullable: false),
                     Longitude = table.Column<long>(nullable: false),
-                    RouteId = table.Column<string>(nullable: true)
+                    RouteId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {

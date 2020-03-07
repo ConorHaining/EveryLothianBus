@@ -76,9 +76,8 @@ namespace EveryBus.Services
                 result = await _httpClient.GetAsync(address);
                 result.EnsureSuccessStatusCode();
             }
-            catch (System.Exception error)
+            catch (Exception)
             {
-                Console.WriteLine(error.Message);
                 return;
             }
 
