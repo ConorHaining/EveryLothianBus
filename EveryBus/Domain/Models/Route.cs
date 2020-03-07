@@ -8,6 +8,6 @@ namespace EveryBus.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string Destination { get; set; }
-        public Point[] Points { get; set; }
+        public Stop[] Stops { get; set; }
     }
 }
