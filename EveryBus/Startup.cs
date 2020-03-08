@@ -36,6 +36,7 @@ namespace EveryBus
             ));
 
             services.AddSingleton<IPollingService, PollingService>();
+            services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContext<BusContext>(
                 ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
                 // ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"),
@@ -71,6 +72,8 @@ namespace EveryBus
             });
 
             app.ApplicationServices.GetService<IPollingService>();
+            var routes = app.ApplicationServices.GetService<IRouteService>();
+            routes.CreateRoutes();
             app.ApplicationServices.GetService<IObserver<VehicleLocation[]>>();
 
             busContext.Database.Migrate();

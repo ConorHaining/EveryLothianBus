@@ -3,14 +3,16 @@ using System;
 using EveryBus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveryBus.Migrations
 {
     [DbContext(typeof(BusContext))]
-    partial class BusContextModelSnapshot : ModelSnapshot
+    [Migration("20200308010557_UpdateRouteNameType")]
+    partial class UpdateRouteNameType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
