@@ -3,14 +3,16 @@ using System;
 using EveryBus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveryBus.Migrations
 {
     [DbContext(typeof(BusContext))]
-    partial class BusContextModelSnapshot : ModelSnapshot
+    [Migration("20200314174541_AddColourToRoutes")]
+    partial class AddColourToRoutes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +26,7 @@ namespace EveryBus.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Color")
+                        .HasDefaultValue("#000000")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Description")
@@ -36,6 +39,7 @@ namespace EveryBus.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("TextColor")
+                        .HasDefaultValue("#FFFFFF")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");

@@ -9,7 +9,7 @@ namespace EveryBus.Domain.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        
+
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
@@ -18,8 +18,12 @@ namespace EveryBus.Domain.Models
 
         [JsonPropertyName("service_type")]
         public string ServiceType { get; set; }
-        
-        [JsonPropertyName("routes")]    
+
+        [JsonPropertyName("routes")]
         public List<Route> Routes { get; set; }
+
+        public string Color { get; set; }
+
+        public string TextColor { get; set; }
     }
 }

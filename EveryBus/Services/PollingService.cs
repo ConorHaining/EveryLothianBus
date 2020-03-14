@@ -13,14 +13,14 @@ namespace EveryBus.Services
     public class PollingService : IPollingService
     {
         private readonly HttpClient _httpClient;
-        private readonly Uri address;
+        private readonly Uri tfeOpenDataaddress;
         private ITimer _timer;
         private List<IObserver<VehicleLocation[]>> _observers;
 
         public PollingService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration)
         {
             _httpClient = _httpClientFactory.CreateClient("polling");
-            address = _configuration.GetValue<Uri>("lothian:address");
+            tfeOpenDataaddress = _configuration.GetValue<Uri>("tfeopendata:address");
 
             _timer = new TimerAdapter(_configuration.GetValue<long>("lothian:pollInterval", 150000));
             _timer.Elapsed += PollAsync;
@@ -73,7 +73,7 @@ namespace EveryBus.Services
             HttpResponseMessage result;
             try
             {
-                result = await _httpClient.GetAsync(address + "vehicle_locations");
+                result = await _httpClient.GetAsync(tfeOpenDataaddress + "vehicle_locations");
                 result.EnsureSuccessStatusCode();
             }
             catch (Exception)
