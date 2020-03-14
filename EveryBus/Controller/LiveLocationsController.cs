@@ -4,6 +4,7 @@ using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using BAMCIS.GeoJSON;
 
 namespace EveryBus.Controller
 {
@@ -12,38 +13,40 @@ namespace EveryBus.Controller
     public class LiveLocationsController : ControllerBase
     {
         private readonly BusContext _busContext;
+        private readonly IVehicleLocationsService _vehicleLocationsService;
 
-        public LiveLocationsController(BusContext busContext)
+        public LiveLocationsController(BusContext busContext, IVehicleLocationsService vehicleLocationsService)
         {
             _busContext = busContext;
+            _vehicleLocationsService = vehicleLocationsService;
         }
 
         [HttpGet]
-        public ActionResult<List<VehicleLocation>> GetAllLocations()
+        public IActionResult GetAllLocations()
         {
-            var lastestReports = _busContext.VehicleLocations
-                                    .GroupBy(x => x.VehicleId)
-                                    .Select(x => new { VehicleId = x.Key, LastestReport = x.Max(x => x.LastGpsFix) })
-                                    .AsEnumerable();
+            var locations =  _vehicleLocationsService.GetAllLatestLocations();
 
-            var result = from locations in _busContext.VehicleLocations
-                         join latest in lastestReports on 
-                            new {x1 = locations.VehicleId, x2 = locations.LastGpsFix} equals new { x1 = latest.VehicleId, x2 = latest.LastestReport}
-                        select locations;
+            var features = new List<Feature>();
 
-            return result.ToList();
+            foreach (var location in locations)
+            {
+                var position = new Position(location.Longitude, location.Latitude);
+                var point = new Point(position);
+                var feature = new Feature(point);
+
+                features.Add(feature);
+            }
+
+            var collection = new FeatureCollection(features);
+
+            return Content(collection.ToJson(), "application/json");
         }
 
         [HttpGet]
         [Route("{VehicleId}")]
         public ActionResult<VehicleLocation> GetSpecificLocations(string VehicleId)
         {
-            var lastestReports = _busContext.VehicleLocations
-                                    .Where(x => x.VehicleId == VehicleId)
-                                    .OrderByDescending(x => x.LastGpsFix)
-                                    .First();
-
-            return lastestReports;
+            return _vehicleLocationsService.GetSpecificLatestLocation(VehicleId);
         }
     }
 }
