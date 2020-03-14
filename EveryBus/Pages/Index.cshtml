@@ -4,7 +4,35 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<script src='https://api.mapbox.com/mapbox-gl-js/v1.8.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v1.8.0/mapbox-gl.css' rel='stylesheet' />
+
+
+<div id='map' style='width: 100%; height: 800px'></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY29uaGFpbmluZyIsImEiOiJjazJucDduMWIwc3N6M214NWNvNHp5YTN1In0.BXXScY-poKaEBDizUeYDUQ';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/conhaining/ck7p9dybm05up1io58zj7u77f',
+        center: [-3.204165, 55.949680],
+        zoom: 11
+    });
+
+    map.on('load', function() {
+        const url = 'api/locations';
+        window.setInterval(function() {
+            map.getSource('liveBuses').setData(url);
+        }, 15000);
+
+        map.addSource('liveBuses', { type: 'geojson', data: url });
+        map.addLayer({
+            'id': 'buses',
+            'type': 'symbol',
+            'source': 'liveBuses',
+            'layout': {
+                'icon-image': 'rocket-15',
+                'icon-allow-overlap': true
+            }
+        }); 
+    });
+</script>
