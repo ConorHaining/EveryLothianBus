@@ -24,15 +24,26 @@
             map.getSource('liveBuses').setData(url);
         }, 15000);
 
-        map.addSource('liveBuses', { type: 'geojson', data: url });
-        map.addLayer({
-            'id': 'buses',
-            'type': 'symbol',
-            'source': 'liveBuses',
-            'layout': {
-                'icon-image': 'rocket-15',
-                'icon-allow-overlap': true
-            }
-        }); 
+        map.loadImage('img/arrow.png',
+            (error, image) => {
+                if (error) { throw error; }
+                map.addImage('arrow', image);
+
+                map.addSource('liveBuses', { type: 'geojson', data: url });
+                map.addLayer({
+                    'id': 'buses',
+                    'type': 'symbol',
+                    'source': 'liveBuses',
+                    'layout': {
+                        'icon-image': 'arrow',
+                        'icon-size': '15px'
+                        'icon-allow-overlap': true,
+                        'icon-rotate': ['get', 'heading'],
+                    }
+                }); 
+
+            });
+
+        
     });
 </script>

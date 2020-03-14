@@ -30,9 +30,12 @@ namespace EveryBus.Controller
 
             foreach (var location in locations)
             {
+                var properties = new Dictionary<string, object>();
+                properties.Add("heading", location.Heading);
+
                 var position = new Position(location.Longitude, location.Latitude);
                 var point = new Point(position);
-                var feature = new Feature(point);
+                var feature = new Feature(point, properties);
 
                 features.Add(feature);
             }
