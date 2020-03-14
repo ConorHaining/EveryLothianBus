@@ -35,6 +35,7 @@ namespace EveryBus.Controller
                 var properties = new Dictionary<string, object>();
                 properties.Add("heading", location.Heading);
                 properties.Add("colour", _routeColourService.Get(location.ServiceName)?.Colour);
+                properties.Add("name", location.ServiceName);
 
                 var position = new Position(location.Longitude, location.Latitude);
                 var point = new Point(position);

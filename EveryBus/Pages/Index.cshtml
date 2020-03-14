@@ -36,15 +36,22 @@
             map.addSource('liveBuses', { type: 'geojson', data: url });
                 map.addLayer({
                     'id': 'buses',
-                    'type': 'circle',
+                    'type': 'symbol',
                     'source': 'liveBuses',
+                    'layout': {
+                        'icon-image': 'bus',
+                        'icon-rotate': ['get', 'heading'],
+                        'icon-allow-overlap': true,
+                        'icon-rotation-alignment': 'map',
+
+                        'text-field': ['get', 'name'],
+                        'text-allow-overlap': true,
+                        'text-anchor': 'bottom'
+                    },
                     'paint': {
-                        // make circles larger as the user zooms from z12 to z22
-                        'circle-radius': {
-                            'base': 1.75,
-                            'stops': [[12, 2], [22, 180]]
-                        },
-                        'circle-color': ['get', 'colour']
+                        'text-color': ['get', 'colour'],
+                        'text-halo-width': 5,
+                        'text-halo-blur': 5
                     }
                 }); 
 
