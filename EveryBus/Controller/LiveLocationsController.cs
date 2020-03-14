@@ -14,11 +14,13 @@ namespace EveryBus.Controller
     {
         private readonly BusContext _busContext;
         private readonly IVehicleLocationsService _vehicleLocationsService;
+        private readonly IRouteColourService _routeColourService;
 
-        public LiveLocationsController(BusContext busContext, IVehicleLocationsService vehicleLocationsService)
+        public LiveLocationsController(BusContext busContext, IVehicleLocationsService vehicleLocationsService, IRouteColourService routeColourService)
         {
             _busContext = busContext;
             _vehicleLocationsService = vehicleLocationsService;
+            _routeColourService = routeColourService;
         }
 
         [HttpGet]
@@ -32,6 +34,7 @@ namespace EveryBus.Controller
             {
                 var properties = new Dictionary<string, object>();
                 properties.Add("heading", location.Heading);
+                properties.Add("colour", _routeColourService.Get(location.ServiceName)?.Colour);
 
                 var position = new Position(location.Longitude, location.Latitude);
                 var point = new Point(position);

@@ -37,6 +37,7 @@ namespace EveryBus
             //    onBreak: Stop the service & time, log, report emergency
             ));
 
+            services.AddMemoryCache();
             services.AddSingleton<IPollingService, PollingService>();
             services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContext<BusContext>(
@@ -45,6 +46,7 @@ namespace EveryBus
                 ServiceLifetime.Singleton, ServiceLifetime.Singleton);
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
+            services.AddSingleton<IRouteColourService, RouteColourService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

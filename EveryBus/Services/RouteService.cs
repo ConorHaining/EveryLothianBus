@@ -16,13 +16,18 @@ namespace EveryBus.Services
         private readonly Uri tfeOpenDataAddress;
         private readonly Uri lothainAddress;
         private readonly BusContext _busContext;
+        private readonly IRouteColourService _routeColourService;
 
-        public RouteService(IHttpClientFactory _httpClientFactory, IConfiguration _configuration, BusContext _busContext)
+        public RouteService(IHttpClientFactory _httpClientFactory,
+                            IConfiguration _configuration,
+                            BusContext _busContext,
+                            IRouteColourService routeColourService)
         {
             _httpClient = _httpClientFactory.CreateClient("polling");
             tfeOpenDataAddress = _configuration.GetValue<Uri>("tfeopendata:address");
             lothainAddress = _configuration.GetValue<Uri>("lothianApi:address");
             this._busContext = _busContext;
+            _routeColourService = routeColourService;
         }
 
         public async void CreateRoutes()
