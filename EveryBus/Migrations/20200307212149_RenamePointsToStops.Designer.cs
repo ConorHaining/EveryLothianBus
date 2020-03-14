@@ -3,14 +3,16 @@ using System;
 using EveryBus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveryBus.Migrations
 {
     [DbContext(typeof(BusContext))]
-    partial class BusContextModelSnapshot : ModelSnapshot
+    [Migration("20200307212149_RenamePointsToStops")]
+    partial class RenamePointsToStops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,9 +26,6 @@ namespace EveryBus.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
-
-                    b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("ServiceType")
@@ -62,17 +61,17 @@ namespace EveryBus.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<long>("Latitude")
+                        .HasColumnType("bigint");
 
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(65,30)");
+                    b.Property<long>("Longitude")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid?>("RouteId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("StopId")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                    b.Property<int>("StopId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

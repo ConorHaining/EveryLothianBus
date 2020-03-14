@@ -73,7 +73,7 @@ namespace EveryBus.Services
             HttpResponseMessage result;
             try
             {
-                result = await _httpClient.GetAsync(address);
+                result = await _httpClient.GetAsync(address + "vehicle_locations");
                 result.EnsureSuccessStatusCode();
             }
             catch (Exception)

@@ -27,7 +27,9 @@ namespace EveryBus
         {
             services.AddRazorPages();
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+            });
             services.AddHttpClient("polling", client => { })
             .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(
                handledEventsAllowedBeforeBreaking: 3,
@@ -36,11 +38,13 @@ namespace EveryBus
             ));
 
             services.AddSingleton<IPollingService, PollingService>();
+            services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContext<BusContext>(
-                ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
-                // ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"),
+                // ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
+                ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"),
                 ServiceLifetime.Singleton, ServiceLifetime.Singleton);
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
+            services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +75,8 @@ namespace EveryBus
             });
 
             app.ApplicationServices.GetService<IPollingService>();
+            var routes = app.ApplicationServices.GetService<IRouteService>();
+            routes.CreateRoutes();
             app.ApplicationServices.GetService<IObserver<VehicleLocation[]>>();
 
             busContext.Database.Migrate();

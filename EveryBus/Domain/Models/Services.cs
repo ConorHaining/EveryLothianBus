@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace EveryBus.Domain.Models
 {
@@ -8,12 +10,16 @@ namespace EveryBus.Domain.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         
-        public string Name;
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
 
+        [JsonPropertyName("description")]
         public string Description { get; set; }
 
+        [JsonPropertyName("service_type")]
         public string ServiceType { get; set; }
-
-        public Route[] Routes { get; set; }
+        
+        [JsonPropertyName("routes")]    
+        public List<Route> Routes { get; set; }
     }
 }

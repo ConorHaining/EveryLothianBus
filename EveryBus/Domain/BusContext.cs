@@ -9,7 +9,7 @@ namespace EveryBus.Domain
         {
         }
 
-        public DbSet<Point> Points { get; set; }
+        public DbSet<Stop> Stops { get; set; }
         public DbSet<Route> Routes { get; set; }
         public DbSet<BusServices> Services { get; set; }
         public DbSet<VehicleLocation> VehicleLocations { get; set; }
