@@ -19,9 +19,15 @@ namespace EveryBus.Services
             this._busContext = _busContext;
         }
 
-        public List<VehicleLocation> GetAllLatestLocations()
+        public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
+            Func<VehicleLocation, bool> activeOnlyClause = x => true;
+            if (activeOnly) {
+                activeOnlyClause = x => x.ServiceName != null || x.JourneyId != null;
+            }
+
             var lastestReports = _busContext.VehicleLocations
+                                    .Where(x => x.ServiceName != null || x.JourneyId != null)
                                     .GroupBy(x => x.VehicleId)
                                     .Select(x => new { VehicleId = x.Key, LastestReport = x.Max(x => x.LastGpsFix) })
                                     .AsEnumerable();

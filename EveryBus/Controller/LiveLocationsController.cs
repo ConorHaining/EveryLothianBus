@@ -24,9 +24,9 @@ namespace EveryBus.Controller
         }
 
         [HttpGet]
-        public IActionResult GetAllLocations()
+        public IActionResult GetAllLocations([FromQuery]bool activeOnly = true)
         {
-            var locations =  _vehicleLocationsService.GetAllLatestLocations();
+            var locations =  _vehicleLocationsService.GetAllLatestLocations(activeOnly);
 
             var features = new List<Feature>();
 

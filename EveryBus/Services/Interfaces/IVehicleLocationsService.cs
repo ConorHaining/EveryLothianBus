@@ -5,7 +5,7 @@ namespace EveryBus.Services.Interfaces
 {
     public interface IVehicleLocationsService
     {
-        List<VehicleLocation> GetAllLatestLocations();
+        List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true);
         VehicleLocation GetSpecificLatestLocation(string VehicleId);
     }
 }
