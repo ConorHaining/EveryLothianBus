@@ -22,7 +22,7 @@ namespace EveryBus.Services
             _httpClient = _httpClientFactory.CreateClient("polling");
             tfeOpenDataaddress = _configuration.GetValue<Uri>("tfeopendata:address");
 
-            _timer = new TimerAdapter(_configuration.GetValue<long>("lothian:pollInterval", 150000));
+            _timer = new TimerAdapter(_configuration.GetValue<long>("tfeopendata:pollInterval", 15000));
             _timer.Elapsed += PollAsync;
             _timer.AutoReset = true;
             _timer.Enabled = true;

@@ -3,36 +3,43 @@ using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
 {
     public class RouteColourService : IRouteColourService
     {
         private readonly IMemoryCache _cache;
-        private readonly BusContext _busContext;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public RouteColourService(IMemoryCache cache, BusContext busContext)
+        public RouteColourService(IMemoryCache cache, IServiceScopeFactory scopeFactory)
         {
             _cache = cache;
-            _busContext = busContext;
+            _scopeFactory = scopeFactory;
 
             SetupColours();
         }
 
         private void SetupColours()
         {
-            var services = _busContext.Services.ToList();
-
-            foreach (var service in services)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                var routeColours = new RouteColours
+                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
+                
+                var services = busContext.Services.ToList();
+
+                foreach (var service in services)
                 {
-                    Name = service.Name,
-                    Colour = service.Color,
-                    TextColor = service.TextColor
-                };
-                Set(routeColours);
+                    var routeColours = new RouteColours
+                    {
+                        Name = service.Name,
+                        Colour = service.Color,
+                        TextColor = service.TextColor
+                    };
+                    Set(routeColours);
+                }
             }
+
         }
 
         public RouteColours Get(string routeName)

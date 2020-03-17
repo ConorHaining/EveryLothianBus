@@ -40,10 +40,9 @@ namespace EveryBus
             services.AddMemoryCache();
             services.AddSingleton<IPollingService, PollingService>();
             services.AddSingleton<IRouteService, RouteService>();
-            services.AddDbContext<BusContext>(
+            services.AddDbContextPool<BusContext>(
                 // ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
-                ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"),
-                ServiceLifetime.Singleton, ServiceLifetime.Singleton);
+                ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"));
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
             services.AddSingleton<IRouteColourService, RouteColourService>();

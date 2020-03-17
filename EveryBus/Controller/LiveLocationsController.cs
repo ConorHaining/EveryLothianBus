@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using BAMCIS.GeoJSON;
 
 namespace EveryBus.Controller
@@ -12,13 +10,11 @@ namespace EveryBus.Controller
     [Route("api/locations")]
     public class LiveLocationsController : ControllerBase
     {
-        private readonly BusContext _busContext;
         private readonly IVehicleLocationsService _vehicleLocationsService;
         private readonly IRouteColourService _routeColourService;
 
-        public LiveLocationsController(BusContext busContext, IVehicleLocationsService vehicleLocationsService, IRouteColourService routeColourService)
+        public LiveLocationsController(IVehicleLocationsService vehicleLocationsService, IRouteColourService routeColourService)
         {
-            _busContext = busContext;
             _vehicleLocationsService = vehicleLocationsService;
             _routeColourService = routeColourService;
         }
@@ -36,6 +32,7 @@ namespace EveryBus.Controller
                 properties.Add("heading", location.Heading);
                 properties.Add("colour", _routeColourService.Get(location.ServiceName)?.Colour);
                 properties.Add("name", location.ServiceName);
+                properties.Add("vehicleId", location.ServiceName);
 
                 var position = new Position(location.Longitude, location.Latitude);
                 var point = new Point(position);
