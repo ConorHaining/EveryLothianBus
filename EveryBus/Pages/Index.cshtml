@@ -18,6 +18,7 @@
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
    crossorigin=""></script>
+<script src="js/leaflet-realtime.min.js"></script>
 
 <div class="bus"></div>
 
@@ -42,11 +43,22 @@
     var liveBusLocationsOptions = {
         pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng)
     }
+    var liveBusLocations = L.geoJSON(busLocations, liveBusLocationsOptions);
 
-    var liveBusLocations = L.geoJSON(busLocations, liveBusLocationsOptions).addTo(map);
+    L.realtime({
+        url: url,
+        crossOrigin: true,
+        type: 'json'
+    }, {
+        interval: 10 * 1000,
+        getFeatureId: function(featureData){
+            return featureData.properties.vehicleId;
+        },
+        container: liveBusLocations,
+        pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng)
+    }).addTo(map);
 
     function makeBusPoint(geoJsonPoint, latlng) {
-        
         return L.circle(latlng, {color: geoJsonPoint.properties.colour});
     }
 })();
