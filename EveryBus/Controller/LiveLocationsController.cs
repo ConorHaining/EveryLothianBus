@@ -32,7 +32,7 @@ namespace EveryBus.Controller
                 properties.Add("heading", location.Heading);
                 properties.Add("colour", _routeColourService.Get(location.ServiceName)?.Colour);
                 properties.Add("name", location.ServiceName);
-                properties.Add("vehicleId", location.ServiceName);
+                properties.Add("vehicleId", location.VehicleId);
 
                 var position = new Position(location.Longitude, location.Latitude);
                 var point = new Point(position);
