@@ -5,10 +5,8 @@
 }
 <style>
     .bus {
-        height: 12px;
-        width: 12px;
-        border-radius: 100%;
-        background-color: attr(data-routeColour);
+        color: whitesmoke;
+        text-align: center;
     }
 </style>
 
@@ -59,6 +57,12 @@
     }).addTo(map);
 
     function makeBusPoint(geoJsonPoint, latlng) {
+        var icon =  L.divIcon({
+            html: `<div style="background-color: ${geoJsonPoint.properties.colour}">${geoJsonPoint.properties.name}</div>`,
+            className: 'bus',
+            iconSize: 24
+        });
+        return L.marker(latlng, {icon: icon});
         return L.circle(latlng, {color: geoJsonPoint.properties.colour});
     }
 })();
