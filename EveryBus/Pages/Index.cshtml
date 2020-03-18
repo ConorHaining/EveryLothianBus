@@ -5,8 +5,38 @@
 }
 <style>
     .bus {
-        color: whitesmoke;
-        text-align: center;
+    color: whitesmoke;
+    text-align: center;
+    display: inline-block;
+    height: 18px;
+    width: 32px;
+    }
+    .bus span{
+        position: relative;
+        bottom: 5px;
+        right: 7px;
+    }
+
+    .arrow_box {
+        bottom: 24px;
+        position: relative;
+        border-radius: 100%;
+        width: 18px;
+        height: 18px;
+        z-index: -1;
+    }
+    .arrow_box:after {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: inherit;
+        border-width: 6px;
+        margin-left: -6px;
     }
 </style>
 
@@ -24,7 +54,6 @@
 <script>
 (async () => {
     const url = 'api/locations';
-    let busLocations = await fetch(url).then((res) => res.json());
 
     var accessToken = 'pk.eyJ1IjoiY29uaGFpbmluZyIsImEiOiJjazJucDduMWIwc3N6M214NWNvNHp5YTN1In0.BXXScY-poKaEBDizUeYDUQ';
     var map = L.map('map').setView([55.949680, -3.204165], 12);
@@ -38,11 +67,6 @@
         accessToken: accessToken
     }).addTo(map);
 
-    var liveBusLocationsOptions = {
-        pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng)
-    }
-    var liveBusLocations = L.geoJSON(busLocations, liveBusLocationsOptions);
-
     L.realtime({
         url: url,
         crossOrigin: true,
@@ -52,18 +76,22 @@
         getFeatureId: function(featureData){
             return featureData.properties.vehicleId;
         },
-        container: liveBusLocations,
-        pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng)
+        pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng),
+        onEachFeature: (feature, layer) => { layer.bindTooltip(feature.properties.vehicleId); }
     }).addTo(map);
 
     function makeBusPoint(geoJsonPoint, latlng) {
         var icon =  L.divIcon({
-            html: `<div style="background-color: ${geoJsonPoint.properties.colour}">${geoJsonPoint.properties.name}</div>`,
-            className: 'bus',
-            iconSize: 24
+            html: `
+            <div class="bus">
+                <span>${geoJsonPoint.properties.name}</span>
+                <div class="arrow_box" style="background-color: ${geoJsonPoint.properties.colour}; 
+                                              border: 0 solid ${geoJsonPoint.properties.colour};
+                                              transform: rotate(${geoJsonPoint.properties.heading}deg);"></div>
+            </div>
+            `
         });
         return L.marker(latlng, {icon: icon});
-        return L.circle(latlng, {color: geoJsonPoint.properties.colour});
     }
 })();
 </script>
