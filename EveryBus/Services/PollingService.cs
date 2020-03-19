@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Timers;
 using EveryBus.Domain.Models;
+using EveryBus.Hubs;
 using EveryBus.Services.Interfaces;
 using EveryBus.Utility.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 
 namespace EveryBus.Services

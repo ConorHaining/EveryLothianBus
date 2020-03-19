@@ -1,6 +1,7 @@
 using System;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
+using EveryBus.Hubs;
 using EveryBus.Services;
 using EveryBus.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,7 @@ namespace EveryBus
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddSignalR(ops => ops.EnableDetailedErrors = true);
 
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -41,9 +43,10 @@ namespace EveryBus
             services.AddSingleton<IPollingService, PollingService>();
             services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContextPool<BusContext>(
-                // ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"),
+                // ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"));
                 ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"));
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
+            services.AddSingleton<IObserver<VehicleLocation[]>, BroadcastLocations>();
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
             services.AddSingleton<IRouteColourService, RouteColourService>();
         }
@@ -73,6 +76,7 @@ namespace EveryBus
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapHub<BusHub>("/busHub");
             });
 
             app.ApplicationServices.GetService<IPollingService>();
