@@ -26,7 +26,8 @@ namespace EveryBus.Services
 
                 Func<VehicleLocation, bool> activeOnlyClause = x => true;
                 if (activeOnly) {
-                    activeOnlyClause = x => x.ServiceName != null || x.JourneyId != null;
+                    var fiveMinutesAgo = DateTimeOffset.Now.AddMinutes(-5).ToUnixTimeSeconds();
+                    activeOnlyClause = x => (x.ServiceName != null || x.JourneyId != null) && x.LastGpsFix > fiveMinutesAgo;
                 }
 
                 var lastestReports = busContext.VehicleLocations

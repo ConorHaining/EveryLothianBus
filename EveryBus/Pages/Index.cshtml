@@ -77,7 +77,8 @@
             return featureData.properties.vehicleId;
         },
         pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng),
-        onEachFeature: (feature, layer) => { layer.bindTooltip(feature.properties.vehicleId); }
+        onEachFeature: (feature, layer) => { layer.bindTooltip(feature.properties.vehicleId); },
+        removeMissing: true
     }).addTo(map);
 
     function makeBusPoint(geoJsonPoint, latlng) {
