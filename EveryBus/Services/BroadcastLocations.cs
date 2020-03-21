@@ -51,7 +51,7 @@ namespace EveryBus.Services
                     _latest.TryAdd(vehicleId, update);
                 }
 
-                if (update.LastGpsFix > existingRecord?.LastGpsFix)
+                if (update.LastGpsFix > existingRecord?.LastGpsFix && (update.ServiceName != null || update.JourneyId != null))
                 {
                     var properties = new Dictionary<string, object>();
                     properties.Add("heading", update.Heading);

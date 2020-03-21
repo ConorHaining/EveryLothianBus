@@ -24,16 +24,13 @@ namespace EveryBus.Services
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                Func<VehicleLocation, bool> activeOnlyClause = x => true;
-                if (activeOnly) {
-                    var fiveMinutesAgo = DateTimeOffset.Now.AddMinutes(-5).ToUnixTimeSeconds();
-                    activeOnlyClause = x => (x.ServiceName != null || x.JourneyId != null) && x.LastGpsFix > fiveMinutesAgo;
-                }
+                var fiveMinutesAgo = DateTimeOffset.Now.AddMinutes(-5).ToUnixTimeSeconds();
 
                 var lastestReports = busContext.VehicleLocations
                                         .Where(x => x.ServiceName != null || x.JourneyId != null)
                                         .GroupBy(x => x.VehicleId)
                                         .Select(x => new { VehicleId = x.Key, LastestReport = x.Max(x => x.LastGpsFix) })
+                                        .Where(x => x.LastestReport >= fiveMinutesAgo)
                                         .AsEnumerable();
 
                 var result = from locations in busContext.VehicleLocations

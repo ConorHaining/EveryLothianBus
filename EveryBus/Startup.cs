@@ -82,7 +82,7 @@ namespace EveryBus
             app.ApplicationServices.GetService<IPollingService>();
             var routes = app.ApplicationServices.GetService<IRouteService>();
             routes.CreateRoutes();
-            app.ApplicationServices.GetService<IObserver<VehicleLocation[]>>();
+            app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
 
             busContext.Database.Migrate();
         }
