@@ -13,19 +13,19 @@ namespace EveryBus.Services
     public class BroadcastLocations : IObserver<VehicleLocation[]>
     {
         private IHubContext<BusHub> _hubContext;
-        private readonly IPollingService _pollingService;
+        private readonly BusLocationsProvider _busLocationsProvider;
         private readonly IRouteColourService _routeColourService;
         private IDisposable unsubscriber;
         private readonly Dictionary<String, VehicleLocation> _latest;
 
-        public BroadcastLocations(IHubContext<BusHub> hubContext, IPollingService pollingService, IRouteColourService routeColourService)
+        public BroadcastLocations(IHubContext<BusHub> hubContext, BusLocationsProvider busLocationsProvider, IRouteColourService routeColourService)
         {
             _hubContext = hubContext;
-            _pollingService = pollingService;
+            _busLocationsProvider = busLocationsProvider;
             _routeColourService = routeColourService;
             _latest = new Dictionary<string, VehicleLocation>();
 
-            unsubscriber = _pollingService.Subscribe(this);
+            // unsubscriber = _busLocationsProvider.Subscribe(this);
         }
 
         public void OnCompleted()

@@ -10,17 +10,17 @@ namespace EveryBus.Services
     public class PersistLocations : IObserver<VehicleLocation[]>
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IPollingService _pollingService;
+        private readonly BusLocationsProvider _busLocationsProvider;
         private IDisposable unsubscriber;
         private readonly Dictionary<String, VehicleLocation> _latest;
 
-        public PersistLocations(IServiceScopeFactory scopeFactory, IPollingService pollingService)
+        public PersistLocations(IServiceScopeFactory scopeFactory, BusLocationsProvider busLocationsProvider)
         {
             _scopeFactory = scopeFactory;
-            _pollingService = pollingService;
+            _busLocationsProvider = busLocationsProvider;
             _latest = new Dictionary<string, VehicleLocation>();
 
-            unsubscriber = _pollingService.Subscribe(this);
+            // unsubscriber = _busLocationsProvider.Subscribe(this);
         }
 
         public void OnCompleted()

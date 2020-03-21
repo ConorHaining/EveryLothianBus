@@ -39,20 +39,24 @@ namespace EveryBus
             //    onBreak: Stop the service & time, log, report emergency
             ));
 
+            services.AddHostedService<DataRefreshService>();
+
+            services.AddSingleton<BusLocationsProvider>();
+            services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
+            services.AddSingleton<IObserver<VehicleLocation[]>, BroadcastLocations>();
+            services.AddSingleton<IRouteColourService, RouteColourService>();
+
             services.AddMemoryCache();
-            services.AddSingleton<IPollingService, PollingService>();
+            // // # services.AddSingleton<IPollingService, PollingService>();
             services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContextPool<BusContext>(
                 // ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"));
                 ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"));
-            services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
-            services.AddSingleton<IObserver<VehicleLocation[]>, BroadcastLocations>();
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
-            services.AddSingleton<IRouteColourService, RouteColourService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BusContext busContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -79,12 +83,12 @@ namespace EveryBus
                 endpoints.MapHub<BusHub>("/busHub");
             });
 
-            app.ApplicationServices.GetService<IPollingService>();
-            var routes = app.ApplicationServices.GetService<IRouteService>();
-            routes.CreateRoutes();
-            app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
+            // app.ApplicationServices.GetService<IPollingService>();
+            // var routes = app.ApplicationServices.GetService<IRouteService>();
+            // routes.CreateRoutes();
+            // app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
 
-            busContext.Database.Migrate();
+            // busContext.Database.Migrate();
         }
     }
 }

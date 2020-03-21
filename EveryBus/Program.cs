@@ -11,11 +11,6 @@ namespace EveryBus
         }
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                // .ConfigureAppConfiguration((hostingContext, config) =>
-                // {
-                //     config.AddJsonFile(
-                //         "config.json", optional: true, reloadOnChange: true);
-                // })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
