@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace EveryBus.Domain.Models
 {
-    public class BusServices
+    public class Service
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

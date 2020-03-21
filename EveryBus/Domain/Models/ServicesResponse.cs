@@ -9,6 +9,6 @@ namespace EveryBus.Domain.Models
         public int LastUpdated { get; set; }
 
         [JsonPropertyName("services")]
-        public List<BusServices> services { get; set; }
+        public List<Service> services { get; set; }
     }
 }

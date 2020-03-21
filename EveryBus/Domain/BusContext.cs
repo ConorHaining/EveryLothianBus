@@ -11,7 +11,7 @@ namespace EveryBus.Domain
 
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Route> Routes { get; set; }
-        public DbSet<BusServices> Services { get; set; }
+        public DbSet<Service> Services { get; set; }
         public DbSet<VehicleLocation> VehicleLocations { get; set; }
     }
 }
