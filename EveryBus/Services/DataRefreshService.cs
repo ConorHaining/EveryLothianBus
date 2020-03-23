@@ -45,7 +45,7 @@ namespace EveryBus.Services
 
             foreach (var observer in _observers)
             {
-                observer.OnNext(data.vehicleLocations);
+                observer.OnNext(data?.vehicleLocations);
             }
         }
     }
