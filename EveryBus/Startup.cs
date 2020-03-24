@@ -56,7 +56,7 @@ namespace EveryBus
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, BusContext busContext)
         {
             if (env.IsDevelopment())
             {
@@ -88,7 +88,7 @@ namespace EveryBus
             // routes.CreateRoutes();
             // app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
 
-            // busContext.Database.Migrate();
+            busContext.Database.Migrate();
         }
     }
 }
