@@ -14,7 +14,7 @@ jobs:
     - name: Build container image (Git SHA)
       run: docker build -t chaining/everybus:$(echo $GITHUB_SHA | head -c7) .
     - name: Build container image (Latest)
-      run: docker build -t chaining/everybus:$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -t chaining/everybus:latest .
 
     - name: Docker Login
       env:
