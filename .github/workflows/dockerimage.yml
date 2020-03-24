@@ -34,7 +34,7 @@ jobs:
     - name: ls -a via ssh
       uses: fifsky/ssh-action@master
       with:
-        command: docker pull chaining/everybus:latest
+        command: docker-compose pull && docker-compose up -d
         host: ${{ secrets.HOST }}
         user: root
         key: ${{ secrets.KEY}}
