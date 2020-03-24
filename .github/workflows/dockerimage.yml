@@ -30,23 +30,11 @@ jobs:
     - uses: webfactory/ssh-agent@v0.2.0
       with:
         ssh-private-key: ${{ secrets.KEY }}
-
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        debug: true
-        script: whoami; pwd;
         
     - name: ls -a via ssh
       uses: fifsky/ssh-action@master
       with:
-        command: |
-          cd /linux-x64
-          ls -a
+        command: docker pull chaining/everybus:latest
         host: ${{ secrets.HOST }}
         user: root
         key: ${{ secrets.KEY}}
