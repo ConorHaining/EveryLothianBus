@@ -20,8 +20,10 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-    - name: Push image to Docker Hub
-      run: docker push chaining/everybus
+    - name: Push image to Docker Hub ($(echo $GITHUB_SHA | head -c7))
+      run: docker push chaining/everybus:$(echo $GITHUB_SHA | head -c7)
+    - name: Push image to Docker Hub (Latest)
+      run: docker push chaining/everybus:latest
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
@@ -30,4 +32,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: whoami
+        script: docker pull chaining/everybus:latest
