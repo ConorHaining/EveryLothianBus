@@ -1,0 +1,40 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Build container image (Git SHA)
+      run: docker build -t chaining/everybus:$(echo $GITHUB_SHA | head -c7) .
+    - name: Build container image (Latest)
+      run: docker build -t chaining/everybus:latest .
+
+    - name: Docker Login
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+    - name: Push image to Docker Hub ($(echo $GITHUB_SHA | head -c7))
+      run: docker push chaining/everybus:$(echo $GITHUB_SHA | head -c7)
+    - name: Push image to Docker Hub (Latest)
+      run: docker push chaining/everybus:latest
+      
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.KEY }}
+        
+    - name: ls -a via ssh
+      uses: fifsky/ssh-action@master
+      with:
+        command: docker pull chaining/everybus:latest
+        host: ${{ secrets.HOST }}
+        user: root
+        key: ${{ secrets.KEY}}
