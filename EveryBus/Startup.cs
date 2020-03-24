@@ -82,13 +82,14 @@ namespace EveryBus
                 endpoints.MapControllers();
                 endpoints.MapHub<BusHub>("/busHub");
             });
+            
+            busContext.Database.Migrate();
 
             // app.ApplicationServices.GetService<IPollingService>();
             var routes = app.ApplicationServices.GetService<IRouteService>();
             routes.CreateRoutes();
             // app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
 
-            busContext.Database.Migrate();
         }
     }
 }
