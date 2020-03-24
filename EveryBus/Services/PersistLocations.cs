@@ -35,6 +35,9 @@ namespace EveryBus.Services
 
         public void OnNext(VehicleLocation[] vehicleUpdates)
         {
+            if (vehicleUpdates == null){
+                return;
+            }
             using (var scope = _scopeFactory.CreateScope())
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
