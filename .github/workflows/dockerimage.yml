@@ -31,10 +31,12 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.KEY }}
         
-    - name: ls -a via ssh
+    - name: Pull latest image and run
       uses: fifsky/ssh-action@master
       with:
-        command: docker pull chaining/everybus:latest
+        command: |
+          docker-compose pull
+          docker-compose up -d
         host: ${{ secrets.HOST }}
         user: root
         key: ${{ secrets.KEY}}
