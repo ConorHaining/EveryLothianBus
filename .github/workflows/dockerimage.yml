@@ -26,6 +26,10 @@ jobs:
       run: docker push chaining/everybus:$(echo $GITHUB_SHA | head -c7)
     - name: Push image to Docker Hub (Latest)
       run: docker push chaining/everybus:latest
+      
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.KEY }}
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
@@ -36,3 +40,13 @@ jobs:
         port: ${{ secrets.PORT }}
         debug: true
         script: whoami; pwd;
+        
+    - name: ls -a via ssh
+      uses: fifsky/ssh-action@master
+      with:
+        command: |
+          cd /linux-x64
+          ls -a
+        host: ${{ secrets.HOST }}
+        user: root
+        key: ${{ secrets.KEY}}
