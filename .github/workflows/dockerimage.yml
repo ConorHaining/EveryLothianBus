@@ -35,4 +35,4 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         debug: true
-        script: docker pull chaining/everybus:latest
+        script: whoami; pwd;
