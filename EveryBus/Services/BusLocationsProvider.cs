@@ -33,6 +33,7 @@ namespace EveryBus.Services
             }
             catch (Exception)
             {
+                Console.WriteLine($"Response has been unsuccessful with response");
                 return default(VehicleLocationResponse);
             }
 
