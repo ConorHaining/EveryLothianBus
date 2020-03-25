@@ -31,12 +31,18 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.KEY }}
         
-    - name: Pull latest image and run
+    - name: Pull latest image
       uses: fifsky/ssh-action@master
       with:
-        command: |
-          docker-compose pull
-          docker-compose up -d
+        command: docker-compose pull
+        host: ${{ secrets.HOST }}
+        user: root
+        key: ${{ secrets.KEY}}
+          
+    - name: Spin up containers
+      uses: fifsky/ssh-action@master
+      with:
+        command: docker-compose up -d
         host: ${{ secrets.HOST }}
         user: root
         key: ${{ secrets.KEY}}
