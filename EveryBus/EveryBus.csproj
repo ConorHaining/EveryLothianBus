@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="GeoJSON" Version="2.1.0" />
+    <PackageReference Include="McMaster.AspNetCore.LetsEncrypt" Version="0.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
