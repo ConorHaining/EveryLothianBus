@@ -40,6 +40,9 @@ namespace EveryBus.Services
 
         public async void OnNext(VehicleLocation[] vehicleUpdates)
         {
+            if (vehicleUpdates == null){
+                return;
+            }
             foreach (var update in vehicleUpdates)
             {
                 var vehicleId = update.VehicleId;
