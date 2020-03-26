@@ -59,6 +59,7 @@ namespace EveryBus.Services
                     var properties = new Dictionary<string, object>();
                     properties.Add("heading", update.Heading);
                     properties.Add("colour", _routeColourService.Get(update.ServiceName)?.Colour);
+                    properties.Add("text_colour", _routeColourService.Get(update.ServiceName)?.TextColor);
                     properties.Add("name", update.ServiceName);
                     properties.Add("vehicleId", update.VehicleId);
 
