@@ -114,7 +114,7 @@ var realtime;
         var icon =  L.divIcon({
             html: `
             <div class="bus">
-                <span>${geoJsonPoint.properties.name}</span>
+                <span style="color: ${geoJsonPoint.properties.text_colour};">${geoJsonPoint.properties.name}</span>
                 <div class="arrow_box" style="background-color: ${geoJsonPoint.properties.colour}; 
                                               border: 0 solid ${geoJsonPoint.properties.colour};
                                               transform: rotate(${geoJsonPoint.properties.heading}deg);"></div>
