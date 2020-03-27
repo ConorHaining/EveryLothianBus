@@ -39,4 +39,4 @@ jobs:
           docker-compose up -d
         host: ${{ secrets.HOST }}
         user: root
-        password: ${{ secrets.PASSWORD}}
+        pass: ${{ secrets.PASSWORD}}
