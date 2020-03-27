@@ -90,7 +90,7 @@ var realtime;
             return featureData.properties.vehicleId;
         },
         pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng),
-        onEachFeature: (feature, layer) => { layer.bindTooltip(JSON.stringigy(feature.properties, null, 2); }
+        onEachFeature: (feature, layer) => { layer.bindTooltip(JSON.stringigy(feature.properties, null, 2)); }
     }).addTo(map);
 
     const firstLoad = await fetch(url).then((res) => res.json());
