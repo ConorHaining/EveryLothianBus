@@ -26,10 +26,6 @@ jobs:
       run: docker push chaining/everybus:$(echo $GITHUB_SHA | head -c7)
     - name: Push image to Docker Hub (Latest)
       run: docker push chaining/everybus:latest
-      
-    - uses: webfactory/ssh-agent@v0.2.0
-      with:
-        ssh-private-key: ${{ secrets.KEY }}
         
     - name: Pull latest image & start containers
       uses: fifsky/ssh-action@master
@@ -40,11 +36,3 @@ jobs:
         host: ${{ secrets.HOST }}
         user: root
         key: ${{ secrets.KEY}}
-          
-#     - name: Spin up containers
-#       uses: fifsky/ssh-action@master
-#       with:
-#         command: docker-compose up -d
-#         host: ${{ secrets.HOST }}
-#         user: root
-#         key: ${{ secrets.KEY}}
