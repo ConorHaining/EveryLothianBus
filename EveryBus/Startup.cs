@@ -52,8 +52,8 @@ namespace EveryBus
             // // # services.AddSingleton<IPollingService, PollingService>();
             services.AddSingleton<IRouteService, RouteService>();
             services.AddDbContextPool<BusContext>(
-                ops => ops.UseMySql(@"server=db;user=dbuser;password=dbuserpassword;database=buses;"));
-                // ops => ops.UseMySql(@"server=localhost;port=1234;user=dbuser;password=dbuserpassword;database=buses;"));
+                // ops => ops.UseMySql(@""));
+                ops => ops.UseMySql(Configuration.GetValue<string>("DatabaseSettings:ConnectionString")));
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
         }
 
@@ -90,7 +90,7 @@ namespace EveryBus
             // app.ApplicationServices.GetService<IPollingService>();
             var routes = app.ApplicationServices.GetService<IRouteService>();
             routes.CreateRoutes();
-            // app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
+            app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
 
         }
     }
