@@ -20,17 +20,27 @@ namespace EveryBus.Services
 
         public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
+            var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+
+            return GetAllLatestLocationsAtTimestamp(timestamp);
+        }
+
+        public List<VehicleLocation> GetAllLatestLocationsAtTimestamp(int timestamp, bool activeOnly = true)
+        {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var fiveMinutesAgo = DateTimeOffset.Now.AddMinutes(-5).ToUnixTimeSeconds();
+                var fiveMinutesAgo = DateTimeOffset.FromUnixTimeSeconds(timestamp)
+                    .AddMinutes(-5)
+                    .ToUnixTimeSeconds();
 
                 var lastestReports = busContext.VehicleLocations
                                         .Where(x => x.ServiceName != null || x.JourneyId != null)
+                                        .Where(x => x.LastGpsFix >= fiveMinutesAgo && x.LastGpsFix <= timestamp)
                                         .GroupBy(x => x.VehicleId)
                                         .Select(x => new { VehicleId = x.Key, LastestReport = x.Max(x => x.LastGpsFix) })
-                                        .Where(x => x.LastestReport >= fiveMinutesAgo)
+                                        // .Where(x => x.LastestReport <= fiveMinutesAgo)
                                         .AsEnumerable();
 
                 var result = from locations in busContext.VehicleLocations

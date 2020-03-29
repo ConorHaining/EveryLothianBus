@@ -8,17 +8,18 @@ using Microsoft.Extensions.Logging;
 
 namespace EveryBus.Pages
 {
-    public class PrivacyModel : PageModel
+    public class HistoricModel : PageModel
     {
-        private readonly ILogger<PrivacyModel> _logger;
+        private readonly ILogger<HistoricModel> _logger;
 
-        public PrivacyModel(ILogger<PrivacyModel> logger)
+        public HistoricModel(ILogger<HistoricModel> logger)
         {
             _logger = logger;
         }
 
         public void OnGet()
         {
+
         }
     }
 }

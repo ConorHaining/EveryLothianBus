@@ -1,0 +1,127 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<style>
+    .bus {
+    color: whitesmoke;
+    text-align: center;
+    display: inline-block;
+    height: 18px;
+    width: 32px;
+    }
+    .bus span{
+        position: relative;
+        bottom: 5px;
+        right: 7px;
+    }
+
+    .arrow_box {
+        bottom: 24px;
+        position: relative;
+        border-radius: 100%;
+        width: 18px;
+        height: 18px;
+        z-index: -1;
+    }
+    .arrow_box:after {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: inherit;
+        border-width: 6px;
+        margin-left: -6px;
+    }
+    #map {
+        width: 100%; 
+        height: 100%; 
+        position: absolute;
+    }
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+<script src="js/leaflet-realtime.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+
+<div id='map'></div>
+<script>
+var realtime;
+
+(async () => {
+    const url = 'api/locations/historic/1585403700';
+
+
+    var accessToken = 'pk.eyJ1IjoiY29uaGFpbmluZyIsImEiOiJjazJucDduMWIwc3N6M214NWNvNHp5YTN1In0.BXXScY-poKaEBDizUeYDUQ';
+    var map = L.map('map', {
+        center: [55.949680, -3.204165],
+        zoom: 13,
+        fadeAnimation: true,
+        zoomAnimation: true 
+    });
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'conhaining/ck7p9dybm05up1io58zj7u77f',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: accessToken
+    }).addTo(map);
+
+    realtime = L.realtime({
+        url: url,
+        crossOrigin: true,
+        type: 'json'
+    }, {
+        start: false,
+        interval: 60 * 1000,
+        getFeatureId: function(featureData){
+            return featureData.properties.vehicleId;
+        },
+        pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng),
+        onEachFeature: (feature, layer) => { layer.bindTooltip(JSON.stringify(feature.properties, null, 2)); }
+    }).addTo(map);
+
+    const firstLoad = await fetch(url).then((res) => res.json());
+    realtime.update(firstLoad);
+
+    @* var connection = new signalR.HubConnectionBuilder().withUrl("/busHub").build();
+
+    connection.on("ReceiveMessage", function (message) {
+        message = JSON.parse(message);
+        console.debug(message);
+        realtime.update(message);
+    });
+
+    connection.start().then(function () {
+        console.log("Connection stated");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    }); *@
+
+    function makeBusPoint(geoJsonPoint, latlng) {
+        var icon =  L.divIcon({
+            html: `
+            <div class="bus">
+                <span style="color: ${geoJsonPoint.properties.text_colour};">${geoJsonPoint.properties.name}</span>
+                <div class="arrow_box" style="background-color: ${geoJsonPoint.properties.colour}; 
+                                              border: 0 solid ${geoJsonPoint.properties.colour};
+                                              transform: rotate(${geoJsonPoint.properties.heading}deg);"></div>
+            </div>
+            `
+        });
+        return L.marker(latlng, {icon: icon});
+    }
+})();
+</script>
