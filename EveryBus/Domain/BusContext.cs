@@ -9,6 +9,12 @@ namespace EveryBus.Domain
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<VehicleLocation>()
+                .HasIndex(m => m.LastGpsFix);
+        }
+
         public DbSet<Stop> Stops { get; set; }
         public DbSet<Route> Routes { get; set; }
         public DbSet<Service> Services { get; set; }
