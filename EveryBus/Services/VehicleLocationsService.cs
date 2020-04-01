@@ -20,7 +20,7 @@ namespace EveryBus.Services
 
         public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
-            var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+            var timestamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             return GetAllLatestLocationsAtTimestamp(timestamp);
         }
