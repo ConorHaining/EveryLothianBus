@@ -90,11 +90,18 @@ var realtime;
             return featureData.properties.vehicleId;
         },
         pointToLayer: (geoJsonPoint, latlng) => makeBusPoint(geoJsonPoint, latlng),
-        onEachFeature: (feature, layer) => { layer.bindTooltip(JSON.stringify(feature.properties, null, 2)); }
+        onEachFeature: (feature, layer) => createTooltip(feature, layer)
     }).addTo(map);
 
     const firstLoad = await fetch(url).then((res) => res.json());
     realtime.update(firstLoad);
+
+    realtime.on('update', function(e) {
+        Object.keys(e.update).forEach(function(id) {
+            var feature = e.update[id];
+            this.getLayer(id).bindTooltip(JSON.stringify(feature.properties, null, 2));
+        }.bind(this));
+    });
 
     var connection = new signalR.HubConnectionBuilder().withUrl("/busHub").build();
 
@@ -109,6 +116,10 @@ var realtime;
     }).catch(function (err) {
         return console.error(err.toString());
     });
+
+    function createTooltip(feature, layer) {
+        return layer.bindTooltip(JSON.stringify(feature.properties, null, 2));
+    }
 
     function makeBusPoint(geoJsonPoint, latlng) {
         var icon =  L.divIcon({
