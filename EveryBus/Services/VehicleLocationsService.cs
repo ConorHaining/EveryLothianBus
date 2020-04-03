@@ -31,23 +31,27 @@ namespace EveryBus.Services
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var fiveMinutesAgo = DateTimeOffset.FromUnixTimeSeconds(timestamp)
+                var fiveMinutesAgo = (int)DateTimeOffset.FromUnixTimeSeconds(timestamp)
                     .AddMinutes(-5)
                     .ToUnixTimeSeconds();
 
-                var lastestReports = busContext.VehicleLocations
-                                        .Where(x => x.ServiceName != null || x.JourneyId != null)
-                                        .Where(x => x.LastGpsFix >= fiveMinutesAgo && x.LastGpsFix <= timestamp)
-                                        .GroupBy(x => x.VehicleId)
-                                        .Select(x => new { VehicleId = x.Key, LastestReport = x.Max(x => x.LastGpsFix) })
-                                        // .Where(x => x.LastestReport <= fiveMinutesAgo)
-                                        .AsEnumerable();
 
-                var result = from locations in busContext.VehicleLocations
-                            join latest in lastestReports on
-                            new { x1 = locations.VehicleId, x2 = locations.LastGpsFix } equals new { x1 = latest.VehicleId, x2 = latest.LastestReport }
-                            select locations;
-               return result.ToList();
+                var lastFiveMinuteRecords = from x in busContext.VehicleLocations
+                                            where (x.ServiceName != null || x.JourneyId != null)
+                                                    && x.LastGpsFix >= fiveMinutesAgo && 
+                                                    x.LastGpsFix <= timestamp
+                                            select x;
+
+                var latestTimeStamps = from x in lastFiveMinuteRecords
+                                        group x by x.VehicleId into groupedBuses
+                                        select new { VehicleId = groupedBuses.Key, LastGpsFix = groupedBuses.Max(y => y.LastGpsFix)};
+
+                var latestRecords = from x in lastFiveMinuteRecords
+                                    join latest in latestTimeStamps
+                                    on new { x1 = x.VehicleId, x2 = x.LastGpsFix } equals new { x1 = latest.VehicleId, x2 = latest.LastGpsFix }
+                                    select x;
+
+               return latestRecords.ToList();
             }
         }
 
