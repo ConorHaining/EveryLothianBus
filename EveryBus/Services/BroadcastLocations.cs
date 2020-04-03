@@ -56,12 +56,14 @@ namespace EveryBus.Services
 
                 if (update.LastGpsFix > existingRecord?.LastGpsFix && (update.ServiceName != null || update.JourneyId != null))
                 {
+                    var timestamp = CreateLocalTimestamp(update);
                     var properties = new Dictionary<string, object>();
                     properties.Add("heading", update.Heading);
                     properties.Add("colour", _routeColourService.Get(update.ServiceName)?.Colour);
                     properties.Add("text_colour", _routeColourService.Get(update.ServiceName)?.TextColor);
                     properties.Add("name", update.ServiceName);
                     properties.Add("vehicleId", update.VehicleId);
+                    properties.Add("last_update", timestamp.ToString());
 
                     var position = new Position(update.Longitude, update.Latitude);
                     var point = new Point(position);
@@ -79,6 +81,14 @@ namespace EveryBus.Services
         public void Unsubscribe()
         {
             unsubscriber.Dispose();
+        }
+
+        private DateTime CreateLocalTimestamp(VehicleLocation location)
+        {
+            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
+            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
+            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
+            return datetime;
         }
     }
 }

@@ -77,14 +77,24 @@ namespace EveryBus.Controller
 
         private Dictionary<string, object> CreateGeoJsonProperties(VehicleLocation location)
         {
+            DateTime datetime = CreateLocalTimestamp(location);
+
             var properties = new Dictionary<string, object>();
             properties.Add("heading", location.Heading);
             properties.Add("colour", _routeColourService.Get(location.ServiceName)?.Colour);
             properties.Add("text_colour", _routeColourService.Get(location.ServiceName)?.TextColor);
             properties.Add("name", location.ServiceName);
             properties.Add("vehicleId", location.VehicleId);
-            properties.Add("last_update", DateTimeOffset.FromUnixTimeSeconds(location.LastGpsFix).ToString());
+            properties.Add("last_update", datetime.ToString());
             return properties;
+        }
+
+        private DateTime CreateLocalTimestamp(VehicleLocation location)
+        {
+            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
+            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
+            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
+            return datetime;
         }
     }
 }
