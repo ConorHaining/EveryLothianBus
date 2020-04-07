@@ -28,7 +28,12 @@ namespace EveryBus
         {
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
-            services.AddCors();
+            services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
 
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -72,7 +77,7 @@ namespace EveryBus
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors();
+            app.UseCors("OpenPolicy");
 
             app.UseRouting();
 
