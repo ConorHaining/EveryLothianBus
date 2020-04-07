@@ -28,6 +28,7 @@ namespace EveryBus
         {
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
+            services.AddCors();
 
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -71,6 +72,7 @@ namespace EveryBus
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors();
 
             app.UseRouting();
 
