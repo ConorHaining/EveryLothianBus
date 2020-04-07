@@ -28,7 +28,7 @@ namespace EveryBus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLetsEncrypt().PersistDataToDirectory(new DirectoryInfo("/home/conor/LetsEncrypt/"), "Password123");
+            services.AddLetsEncrypt().PersistDataToDirectory(new DirectoryInfo("/ssl/"), null);
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
