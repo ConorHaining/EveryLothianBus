@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
 using EveryBus.Services;
 using EveryBus.Services.Interfaces;
+using McMaster.AspNetCore.LetsEncrypt;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +28,7 @@ namespace EveryBus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLetsEncrypt().PersistDataToDirectory(new DirectoryInfo("/home/conor/LetsEncrypt/"), "Password123");
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
