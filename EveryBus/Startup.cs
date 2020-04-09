@@ -35,7 +35,8 @@ namespace EveryBus
             {
                 builder.WithOrigins("https://edi-bus.glitch.me")
                     .AllowAnyMethod()
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             }));
 
             services.AddControllers().AddJsonOptions(options =>
