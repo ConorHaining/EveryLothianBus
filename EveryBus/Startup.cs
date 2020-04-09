@@ -33,7 +33,7 @@ namespace EveryBus
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.WithOrigins("https://edi-bus.glitch.me")
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
