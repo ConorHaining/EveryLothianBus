@@ -20,7 +20,8 @@ namespace EveryBus.Services
 
         public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
-            var timestamp = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+            timestamp = CreateLocalTimestamp(timestamp);
 
             return GetAllLatestLocationsAtTimestamp(timestamp);
         }
@@ -68,6 +69,15 @@ namespace EveryBus.Services
 
                 return lastestReports;
             }
+        }
+
+        private int CreateLocalTimestamp(int timestamp)
+        {
+            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
+            var datetime = DateTime.UnixEpoch.AddSeconds(timestamp);
+            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
+            var offset = new DateTimeOffset(datetime);
+            return (int)offset.ToUnixTimeSeconds();
         }
     }
 }
