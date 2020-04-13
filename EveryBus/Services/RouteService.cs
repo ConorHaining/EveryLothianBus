@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -51,6 +52,16 @@ namespace EveryBus.Services
                     await busContext.AddRangeAsync(servicesJson.services);
                     await busContext.SaveChangesAsync();
                 }
+            }
+        }
+
+        public IEnumerable<Service> GetRoutes()
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
+
+                return busContext.Services.ToList();
             }
         }
 
