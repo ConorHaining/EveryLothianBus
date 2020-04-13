@@ -86,6 +86,7 @@ namespace EveryBus.Controller
             properties.Add("name", location.ServiceName);
             properties.Add("vehicleId", location.VehicleId);
             properties.Add("last_update", datetime.ToString());
+            properties.Add("destination", location.Destination);
             return properties;
         }
 

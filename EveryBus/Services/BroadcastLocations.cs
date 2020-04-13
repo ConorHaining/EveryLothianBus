@@ -64,6 +64,7 @@ namespace EveryBus.Services
                     properties.Add("name", update.ServiceName);
                     properties.Add("vehicleId", update.VehicleId);
                     properties.Add("last_update", timestamp.ToString());
+                    properties.Add("destination", update.Destination);
 
                     var position = new Position(update.Longitude, update.Latitude);
                     var point = new Point(position);
