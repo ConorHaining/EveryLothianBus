@@ -63,7 +63,7 @@ namespace EveryBus.Services
                     properties.Add("text_colour", _routeColourService.Get(update.ServiceName)?.TextColor);
                     properties.Add("name", update.ServiceName);
                     properties.Add("vehicleId", update.VehicleId);
-                    properties.Add("last_update", timestamp.ToString());
+                    properties.Add("last_update", timestamp);
                     properties.Add("destination", update.Destination);
 
                     var position = new Position(update.Longitude, update.Latitude);
@@ -86,9 +86,7 @@ namespace EveryBus.Services
 
         private DateTime CreateLocalTimestamp(VehicleLocation location)
         {
-            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
             var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
-            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
             return datetime;
         }
     }
