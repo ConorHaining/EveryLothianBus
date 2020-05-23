@@ -4,6 +4,7 @@ using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
 using EveryBus.Services;
+using EveryBus.Services.Background;
 using EveryBus.Services.Interfaces;
 using McMaster.AspNetCore.LetsEncrypt;
 using Microsoft.AspNetCore.Builder;
@@ -49,7 +50,7 @@ namespace EveryBus
             //    onBreak: Stop the service & time, log, report emergency
             ));
 
-            services.AddHostedService<DataRefreshService>();
+            services.AddHostedService<LocationFetching>();
 
             services.AddSingleton<BusLocationsProvider>();
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
