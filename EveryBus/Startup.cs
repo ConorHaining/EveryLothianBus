@@ -51,6 +51,7 @@ namespace EveryBus
             ));
 
             services.AddHostedService<LocationFetching>();
+            services.AddHostedService<RouteFetching>();
 
             services.AddSingleton<BusLocationsProvider>();
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
@@ -58,8 +59,7 @@ namespace EveryBus
             services.AddSingleton<IRouteColourService, RouteColourService>();
 
             services.AddMemoryCache();
-            // // # services.AddSingleton<IPollingService, PollingService>();
-            services.AddSingleton<IRouteService, RouteService>();
+            
             services.AddDbContextPool<BusContext>(
                 // ops => ops.UseMySql(@""));
                 ops => ops.UseMySql(Configuration.GetValue<string>("DatabaseSettings:ConnectionString")));
@@ -96,12 +96,6 @@ namespace EveryBus
             });
             
             busContext.Database.Migrate();
-
-            // app.ApplicationServices.GetService<IPollingService>();
-            var routes = app.ApplicationServices.GetService<IRouteService>();
-            routes.CreateRoutes();
-            app.ApplicationServices.GetServices<IObserver<VehicleLocation[]>>();
-
         }
     }
 }
