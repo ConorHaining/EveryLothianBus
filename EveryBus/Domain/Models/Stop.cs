@@ -13,6 +13,24 @@ namespace EveryBus.Domain.Models
         [JsonPropertyName("stop_id")]
         public string StopId { get; set; }
 
+        [JsonPropertyName("atco_code")]
+        public string AtocCode { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("identifier")]
+        public string Identifier { get; set; }
+
+        [JsonPropertyName("locality")]
+        public string Locality { get; set; }
+
+        [JsonPropertyName("orientation")]
+        public int Orientation { get; set; }
+
+        [JsonPropertyName("direction")]
+        public string Direction { get; set; }
+
         [JsonPropertyName("latitude")]
         [Column(TypeName = "decimal(9, 6)")]
         public decimal Latitude { get; set; }
@@ -20,6 +38,9 @@ namespace EveryBus.Domain.Models
         [JsonPropertyName("longitude")]
         [Column(TypeName = "decimal(9, 6)")]
         public decimal Longitude { get; set; }
+
+        [JsonPropertyName("service_type")]
+        public string ServiceType { get; set; }
 
         public bool Equals([AllowNull] Stop other)
         {
