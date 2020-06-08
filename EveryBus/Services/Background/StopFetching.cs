@@ -52,6 +52,8 @@ namespace EveryBus.Services.Background
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                await Task.Delay(TimeSpan.FromMinutes(1));
+
                 var stops = await PollAsync();
 
                 var existingStops = GetExistingStops();
