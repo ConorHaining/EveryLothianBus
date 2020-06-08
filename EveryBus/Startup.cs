@@ -57,6 +57,7 @@ namespace EveryBus
             services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
             services.AddSingleton<IObserver<VehicleLocation[]>, BroadcastLocations>();
             services.AddSingleton<IRouteColourService, RouteColourService>();
+            services.AddSingleton<IRouteService, RouteService>();
 
             services.AddMemoryCache();
             

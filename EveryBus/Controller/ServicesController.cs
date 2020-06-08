@@ -12,9 +12,8 @@ namespace EveryBus.Controller
     public class RoutesController : ControllerBase
     {
         private readonly IRouteService _routeService;
-        private readonly IRouteColourService _routeColourService;
 
-        public RoutesController(IRouteService routeService, IRouteColourService routeColourService)
+        public RoutesController(IRouteService routeService)
         {
             _routeService = routeService;
         }
