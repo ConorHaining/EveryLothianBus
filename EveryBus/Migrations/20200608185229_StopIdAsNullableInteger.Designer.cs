@@ -3,14 +3,16 @@ using System;
 using EveryBus.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveryBus.Migrations
 {
     [DbContext(typeof(BusContext))]
-    partial class BusContextModelSnapshot : ModelSnapshot
+    [Migration("20200608185229_StopIdAsNullableInteger")]
+    partial class StopIdAsNullableInteger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

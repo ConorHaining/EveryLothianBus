@@ -11,7 +11,7 @@ namespace EveryBus.Domain.Models
         public Guid Id { get; set; }
 
         [JsonPropertyName("stop_id")]
-        public string StopId { get; set; }
+        public int? StopId { get; set; }
 
         [JsonPropertyName("atco_code")]
         public string AtocCode { get; set; }
