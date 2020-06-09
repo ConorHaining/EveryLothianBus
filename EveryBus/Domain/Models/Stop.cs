@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using EveryBus.Domain.Converters;
 
 namespace EveryBus.Domain.Models
 {
@@ -11,6 +12,7 @@ namespace EveryBus.Domain.Models
         public Guid Id { get; set; }
 
         [JsonPropertyName("stop_id")]
+        [JsonConverter(typeof(StopIdToIntConverter))]
         public int? StopId { get; set; }
 
         [JsonPropertyName("atco_code")]
