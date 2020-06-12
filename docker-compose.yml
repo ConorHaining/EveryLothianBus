@@ -1,9 +1,10 @@
-version: "3"
+version: "3.4"
 services:
-    web:
+    everybus:
+        image: ${DOCKER_REGISTRY-}everybus
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: EveryBus/Dockerfile
         ports:
             - "8000:80"
         depends_on:
