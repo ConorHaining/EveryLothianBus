@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
@@ -43,6 +44,7 @@ namespace EveryBus.Domain.Models
 
         [JsonPropertyName("service_type")]
         public string ServiceType { get; set; }
+        public List<RouteStop> RouteStops { get; set; }
 
         public bool Equals([AllowNull] Stop other)
         {

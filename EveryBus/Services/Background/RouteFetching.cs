@@ -52,25 +52,94 @@ namespace EveryBus.Services.Background
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var services = await PollAsync();
-                services = await getRouteColoursAsync(services).ConfigureAwait(false);
+                DeleteCurrentRecords();
 
-                var newServices = FindUniqueServices(services.services);
+                var services = await GetServices();
+                services = await AddRouteColours(services).ConfigureAwait(false);
+                var stops = await GetStops();
+                List<RouteStop> routeStops = new List<RouteStop>();
 
-                UpdateServices(newServices);
+                (services, stops, routeStops) = CombineStopsAndServices(services, stops);
+
+                // services = FindUniqueServices(services);
+
+                UpdateServices(services, stops, routeStops);
 
                 await Task.Delay(TimeSpan.FromDays(1));
             }
 
         }
 
-        private void UpdateServices(List<Service> newServices)
+        private void DeleteCurrentRecords()
         {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                busContext.UpdateRange(newServices);
+                busContext.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=0; TRUNCATE buses.Services; TRUNCATE buses.Routes; TRUNCATE buses.Stops; TRUNCATE buses.RouteStop; SET FOREIGN_KEY_CHECKS = 1;");
+            }
+
+        }
+
+        private (List<Service> services, List<Stop> stops, List<RouteStop> routeStops) CombineStopsAndServices(List<Service> services, List<Stop> stops)
+        {
+            List<RouteStop> routeStops = new List<RouteStop>();
+
+            foreach (var service in services)
+            {
+                foreach (var route in service.Routes)
+                {
+                    route.RouteStops = new List<RouteStop>();
+                    foreach (var stop in route.Stops)
+                    {
+                        var detailedStop = stops.FirstOrDefault(x => x.StopId == stop.StopId);
+
+                        if (detailedStop != default(Stop))
+                        {
+                            var routeStop = new RouteStop
+                            {
+                                Order = route.RouteStops.Count(),
+                                Route = route,
+                                Stop = detailedStop,
+                            };
+                            route.RouteStops.Add(routeStop);
+                        }
+                    }
+                }
+            }
+
+            return (services, stops, routeStops);
+        }
+
+        private async Task<List<Stop>> GetStops()
+        {
+            _logger.LogInformation("Request raised at {0}.", DateTime.Now);
+
+            var result = await _httpClient.GetAsync(_pollAddress + "stops");
+            if (!result.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("Request has been unsucessful with code {0}.", result.StatusCode);
+                return default(List<Stop>);
+            }
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var stops = await result.Content.ReadAsStringAsync();
+            var stopsResponse = JsonSerializer.Deserialize<StopResponse>(stops, jsonOptions);
+            _logger.LogInformation("Request completed at at {0}.", DateTime.Now);
+
+            return stopsResponse.Stops;
+        }
+
+        private void UpdateServices(List<Service> services, List<Stop> stops, List<RouteStop> routeStops)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
+
+                busContext.Services.AddRange(services);
                 busContext.SaveChanges();
             }
         }
@@ -118,7 +187,7 @@ namespace EveryBus.Services.Background
             return servicesToUpdate;
         }
 
-        public async Task<ServicesResponse> PollAsync()
+        public async Task<List<Service>> GetServices()
         {
             _logger.LogInformation("Request raised at {0}.", DateTime.Now);
 
@@ -126,23 +195,23 @@ namespace EveryBus.Services.Background
             if (!result.IsSuccessStatusCode)
             {
                 _logger.LogWarning("Request has been unsucessful with code {0}.", result.StatusCode);
-                return default(ServicesResponse);
+                return default(List<Service>);
             }
 
             var jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
-            var vehicleUpdates = await result.Content.ReadAsStringAsync();
-            var vehicleUpdatesResponse = JsonSerializer.Deserialize<ServicesResponse>(vehicleUpdates, jsonOptions);
+            var servicesResponse = await result.Content.ReadAsStringAsync();
+            var servicesJson = JsonSerializer.Deserialize<ServicesResponse>(servicesResponse, jsonOptions);
             _logger.LogInformation("Request completed at at {0}.", DateTime.Now);
 
-            return vehicleUpdatesResponse;
+            return servicesJson.services;
         }
 
-        private async Task<ServicesResponse> getRouteColoursAsync(ServicesResponse servicesResponse)
+        private async Task<List<Service>> AddRouteColours(List<Service> services)
         {
-            foreach (var service in servicesResponse.services)
+            foreach (var service in services)
             {
                 var routeId = service.Name;
 
@@ -159,7 +228,7 @@ namespace EveryBus.Services.Background
                 }
             }
 
-            return servicesResponse;
+            return services;
         }
     }
 }

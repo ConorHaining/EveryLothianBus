@@ -51,7 +51,6 @@ namespace EveryBus
             ));
 
             services.AddHostedService<LocationFetching>();
-            services.AddHostedService<StopFetching>();
             services.AddHostedService<RouteFetching>();
 
             services.AddSingleton<BusLocationsProvider>();

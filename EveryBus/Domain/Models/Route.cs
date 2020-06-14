@@ -14,6 +14,9 @@ namespace EveryBus.Domain.Models
         public string Destination { get; set; }
 
         [JsonPropertyName("points")]
+        [NotMapped]
         public List<Stop> Stops { get; set; }
+
+        public List<RouteStop> RouteStops { get; set; }
     }
 }
