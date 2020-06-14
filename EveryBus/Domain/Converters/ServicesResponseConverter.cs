@@ -12,13 +12,19 @@ namespace EveryBus.Domain.Converters
         }
         public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var value = reader.GetString();
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                var value = reader.GetString();
 
-            if (Int32.TryParse(value, out var number)) {
-                return number;
+                if (Int32.TryParse(value, out var number))
+                {
+                    return number;
+                }
+
+                return null;
             }
 
-            return null;
+            return reader.GetInt32();
         }
 
         public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
