@@ -76,7 +76,7 @@ namespace EveryBus.Services.Background
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                busContext.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=0; TRUNCATE buses.Services; TRUNCATE buses.Routes; TRUNCATE buses.Stops; TRUNCATE buses.RouteStop; SET FOREIGN_KEY_CHECKS = 1;");
+                busContext.Database.ExecuteSqlRaw("SET FOREIGN_KEY_CHECKS=0; TRUNCATE buses.RoutePoint; TRUNCATE buses.Services; TRUNCATE buses.Routes; TRUNCATE buses.Stops; TRUNCATE buses.RouteStop; SET FOREIGN_KEY_CHECKS = 1;");
             }
 
         }
@@ -90,7 +90,7 @@ namespace EveryBus.Services.Background
                 foreach (var route in service.Routes)
                 {
                     route.RouteStops = new List<RouteStop>();
-                    foreach (var stop in route.Stops)
+                    foreach (var stop in route.Points)
                     {
                         var detailedStop = stops.FirstOrDefault(x => x.StopId == stop.StopId);
 
@@ -155,7 +155,7 @@ namespace EveryBus.Services.Background
                 foreach (var service in services)
                 {
                     var existingService = busContext.Services.Include(x => x.Routes)
-                                                                .ThenInclude(x => x.Stops)
+                                                                .ThenInclude(x => x.Points)
                                                              .Where(x => x.Name == service.Name)
                                                              .FirstOrDefault();
                     if (existingService == null || existingService == default(Service))
@@ -173,7 +173,7 @@ namespace EveryBus.Services.Background
                             continue;
                         }
 
-                        var difference = existingRoute.Stops.Except(route.Stops);
+                        var difference = existingRoute.Points.Except(route.Points);
 
                         if (difference.Count() > 0)
                         {
