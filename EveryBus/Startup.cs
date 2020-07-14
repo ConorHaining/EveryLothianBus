@@ -59,6 +59,8 @@ namespace EveryBus
             services.AddSingleton<IRouteColourService, RouteColourService>();
             services.AddSingleton<IRouteService, RouteService>();
 
+            services.AddTransient<IStopsService, StopsService>();
+
             services.AddMemoryCache();
             
             services.AddDbContextPool<BusContext>(
