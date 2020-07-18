@@ -13,6 +13,7 @@ namespace EveryBus
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseSentry("https://32ca72a3968c43ad832b353620d6c018@o422150.ingest.sentry.io/5344727");
                     webBuilder.UseStartup<Startup>();
                 });
     }
