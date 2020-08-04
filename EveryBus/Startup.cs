@@ -1,12 +1,10 @@
 using System;
-using System.IO;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
 using EveryBus.Services;
 using EveryBus.Services.Background;
 using EveryBus.Services.Interfaces;
-using McMaster.AspNetCore.LetsEncrypt;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -61,9 +59,9 @@ namespace EveryBus
 
             services.AddMemoryCache();
             
-            services.AddDbContextPool<BusContext>(
-                // ops => ops.UseMySql(@""));
-                ops => ops.UseMySql(Configuration.GetValue<string>("DatabaseSettings:ConnectionString")));
+            services.AddDbContextPool<BusContext>(options => {
+                options.UseSqlServer(Configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
+            });
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
         }
 
