@@ -32,7 +32,12 @@ namespace EveryBus
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
             {
-                builder.WithOrigins("https://edi-bus.glitch.me", "https://lacy-jungle-bramble.glitch.me")
+                builder.WithOrigins(
+                        "https://edi-bus.glitch.me",
+                        "https://lacy-jungle-bramble.glitch.me",
+                        "http://127.0.0.1:8081",
+                        "https://icy-rock-04db5a503.azurestaticapps.net"
+                     )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
