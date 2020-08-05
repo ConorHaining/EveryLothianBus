@@ -1,4 +1,4 @@
-name: Deploy to Azure
+name: Push to Docker
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -31,19 +31,3 @@ jobs:
 
     - name: Push image to Docker Hub (Azure)
       run: docker push chaining/everybus:azure
-
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Deploy to Azure Container Instances
-      uses: Azure/aci-deploy@v1
-      with:
-        dns-name-label: chaining/everybus:azure
-        resource-group: everybus
-        image: chaining/everybus:azure
-        registry-login-server:  index.docker.io
-        registry-username: ${{ secrets.DOCKER_USERNAME }}
-        registry-password: ${{ secrets.DOCKER_PASSWORD }}  
-        location: "south uk"
