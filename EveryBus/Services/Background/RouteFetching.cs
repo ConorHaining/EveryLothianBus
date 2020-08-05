@@ -52,7 +52,7 @@ namespace EveryBus.Services.Background
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                DeleteCurrentRecords();
+                //DeleteCurrentRecords();
 
                 var services = await GetServices();
                 services = await AddRouteColours(services).ConfigureAwait(false);
