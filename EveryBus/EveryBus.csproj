@@ -5,10 +5,12 @@
     <UserSecretsId>58307f16-092b-452d-8d60-6fa963023fed</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <StartupObject>EveryBus.Program</StartupObject>
+    <ApplicationInsightsResourceId>/subscriptions/8aeff789-4eb1-419c-957d-5a29f8ee9d8d/resourceGroups/everybus/providers/microsoft.insights/components/everybus-monitor</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="GeoJSON" Version="2.1.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
