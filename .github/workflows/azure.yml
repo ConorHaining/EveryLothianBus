@@ -40,7 +40,7 @@ jobs:
     - name: Deploy to Azure Container Instances
       uses: Azure/aci-deploy@v1
       with:
-        dns-name-label: chaining/everybus:azure
+        dns-name-label: everybus.azurewebsites.net
         resource-group: everybus
         image: chaining/everybus:azure
         registry-login-server:  index.docker.io
