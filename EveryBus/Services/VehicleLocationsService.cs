@@ -32,22 +32,22 @@ namespace EveryBus.Services
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var fiveMinutesAgo = (int)DateTimeOffset.FromUnixTimeSeconds(timestamp)
-                    .AddMinutes(-5)
+                var oneMinuteAgo = (int)DateTimeOffset.FromUnixTimeSeconds(timestamp)
+                    .AddMinutes(-1)
                     .ToUnixTimeSeconds();
 
 
-                var lastFiveMinuteRecords = from x in busContext.VehicleLocations
+                var lastMinuteStamps = from x in busContext.VehicleLocations
                                             where (x.ServiceName != null || x.JourneyId != null)
-                                                    && x.LastGpsFix >= fiveMinutesAgo && 
+                                                    && x.LastGpsFix >= oneMinuteAgo && 
                                                     x.LastGpsFix <= timestamp
                                             select x;
 
-                var latestTimeStamps = from x in lastFiveMinuteRecords
+                var latestTimeStamps = from x in lastMinuteStamps
                                         group x by x.VehicleId into groupedBuses
                                         select new { VehicleId = groupedBuses.Key, LastGpsFix = groupedBuses.Max(y => y.LastGpsFix)};
 
-                var latestRecords = from x in lastFiveMinuteRecords
+                var latestRecords = from x in lastMinuteStamps
                                     join latest in latestTimeStamps
                                     on new { x1 = x.VehicleId, x2 = x.LastGpsFix } equals new { x1 = latest.VehicleId, x2 = latest.LastGpsFix }
                                     select x;
