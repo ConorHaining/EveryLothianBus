@@ -1,4 +1,4 @@
-name: Deploy to Azure
+name: Push to Docker
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -45,4 +45,5 @@ jobs:
         image: chaining/everybus:azure
         registry-login-server:  index.docker.io
         registry-username: ${{ secrets.DOCKER_USERNAME }}
-        registry-password: ${{ secrets.DOCKER_PASSWORD }}  
+        registry-password: ${{ secrets.DOCKER_PASSWORD }}
+        location: uksouth
