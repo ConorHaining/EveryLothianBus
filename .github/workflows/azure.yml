@@ -47,3 +47,4 @@ jobs:
         registry-username: ${{ secrets.DOCKER_USERNAME }}
         registry-password: ${{ secrets.DOCKER_PASSWORD }}
         location: uksouth
+        name: everybus
