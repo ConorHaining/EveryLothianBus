@@ -33,11 +33,11 @@ namespace EveryBus.Tests.Services
 
             cacheLocations.OnNext(vehicleUpdates);
 
-            cache.Count.ShouldBeGreaterThan(0);
+            cache.Count.ShouldBe(1);
         }
 
         [Test]
-        public void OnNext_ShouldAddToCacheForEachGivenValue_WhenUnqiueVehicleId()
+        public void OnNext_ShouldOnlyHaveOneKey_WhenGivenMutlipleUpdates()
         {
             var cache = new MemoryCache(new MemoryCacheOptions());
             var cacheLocations = new CacheLocations(cache);
@@ -50,11 +50,11 @@ namespace EveryBus.Tests.Services
 
             cacheLocations.OnNext(vehicleUpdates);
 
-            cache.Count.ShouldBe(3);
+            cache.Count.ShouldBe(1);
         }
 
         [Test]
-        public void OnNext_ShouldUseVehicleIdAsCacheKey()
+        public void OnNext_ShouldUseVehicleCacheKey()
         {
             var cache = new MemoryCache(new MemoryCacheOptions());
             var cacheLocations = new CacheLocations(cache);
@@ -66,12 +66,7 @@ namespace EveryBus.Tests.Services
             };
 
             cacheLocations.OnNext(vehicleUpdates);
-
-            cache.ShouldSatisfyAllConditions(
-                () => cache.TryGetValue("vehicle:123", out var valueOne).ShouldBeTrue(),
-                () => cache.TryGetValue("vehicle:456", out var valueTwo).ShouldBeTrue(),
-                () => cache.TryGetValue("vehicle:789", out var valueThree).ShouldBeTrue()
-            );
+            cache.TryGetValue("vehicles", out _).ShouldBeTrue();
         }
     }
 }

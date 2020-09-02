@@ -31,10 +31,7 @@ namespace EveryBus.Services
             } 
             else
             {
-                foreach (var update in vehicleUpdates)
-                {
-                    cache.Set($"vehicle:{update.VehicleId}", update, TimeSpan.FromSeconds(60));
-                }
+                cache.Set($"vehicles", vehicleUpdates, TimeSpan.FromSeconds(60));
             }
         }
     }
