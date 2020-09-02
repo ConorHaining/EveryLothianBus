@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace EveryBus.Domain.Models
@@ -8,6 +9,6 @@ namespace EveryBus.Domain.Models
         public int LastUpdated { get; set; }
 
         [JsonPropertyName("vehicles")]
-        public VehicleLocation[] vehicleLocations { get; set; }
+        public List<VehicleLocation> vehicleLocations { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
@@ -12,18 +12,23 @@ namespace EveryBus.Services
     public class VehicleLocationsService : IVehicleLocationsService
     {
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IMemoryCache cache;
 
-        public VehicleLocationsService(IServiceScopeFactory scopeFactory)
+        public VehicleLocationsService(IServiceScopeFactory scopeFactory, IMemoryCache cache)
         {
             _scopeFactory = scopeFactory;
+            this.cache = cache;
         }
 
         public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
-            var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-            timestamp = CreateLocalTimestamp(timestamp);
+            return cache.GetOrCreate("vehicles", updates =>
+            {
+                var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
+                timestamp = CreateLocalTimestamp(timestamp);
 
-            return GetAllLatestLocationsAtTimestamp(timestamp);
+                return GetAllLatestLocationsAtTimestamp(timestamp);
+            });
         }
 
         public List<VehicleLocation> GetAllLatestLocationsAtTimestamp(int timestamp, bool activeOnly = true)

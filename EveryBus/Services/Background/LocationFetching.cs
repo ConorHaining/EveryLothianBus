@@ -16,7 +16,7 @@ namespace EveryBus.Services.Background
         private readonly ILogger<LocationFetching> _logger;
         private readonly BusLocationsProvider _busLocationsProvider;
         private readonly IConfiguration _configuration;
-        private IEnumerable<IObserver<VehicleLocation[]>> _observers;
+        private IEnumerable<IObserver<List<VehicleLocation>>> _observers;
         private readonly HttpClient _httpClient;
         private readonly Uri _pollAddress;
 
@@ -24,7 +24,7 @@ namespace EveryBus.Services.Background
             ILogger<LocationFetching> logger,
             BusLocationsProvider busLocationsProvider,
             IConfiguration configuration,
-            IEnumerable<IObserver<VehicleLocation[]>> observers,
+            IEnumerable<IObserver<List<VehicleLocation>>> observers,
             IHttpClientFactory _httpClientFactory
             )
         {

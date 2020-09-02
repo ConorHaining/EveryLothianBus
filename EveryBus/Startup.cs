@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
@@ -57,9 +58,9 @@ namespace EveryBus
             services.AddHostedService<RouteFetching>();
 
             services.AddSingleton<BusLocationsProvider>();
-            services.AddSingleton<IObserver<VehicleLocation[]>, PersistLocations>();
-            services.AddSingleton<IObserver<VehicleLocation[]>, BroadcastLocations>();
-            services.AddSingleton<IObserver<VehicleLocation[]>, CacheLocations>();
+            services.AddSingleton<IObserver<List<VehicleLocation>>, PersistLocations>();
+            services.AddSingleton<IObserver<List<VehicleLocation>>, BroadcastLocations>();
+            services.AddSingleton<IObserver<List<VehicleLocation>>, CacheLocations>();
             services.AddSingleton<IRouteColourService, RouteColourService>();
             services.AddSingleton<IRouteService, RouteService>();
 

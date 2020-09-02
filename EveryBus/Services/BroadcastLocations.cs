@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
 {
-    public class BroadcastLocations : IObserver<VehicleLocation[]>
+    public class BroadcastLocations : IObserver<List<VehicleLocation>>
     {
         private IHubContext<BusHub> _hubContext;
         private readonly BusLocationsProvider _busLocationsProvider;
@@ -38,7 +38,7 @@ namespace EveryBus.Services
             //
         }
 
-        public async void OnNext(VehicleLocation[] vehicleUpdates)
+        public async void OnNext(List<VehicleLocation> vehicleUpdates)
         {
             if (vehicleUpdates == null){
                 return;

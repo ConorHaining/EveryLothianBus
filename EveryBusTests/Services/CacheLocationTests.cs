@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
 using NUnit.Framework;
 using Shouldly;
+using System.Collections.Generic;
 
 namespace EveryBus.Tests.Services
 {
@@ -16,7 +17,7 @@ namespace EveryBus.Tests.Services
         {
             var cache = Substitute.For<IMemoryCache>();
             var cacheLocations = new CacheLocations(cache);
-            VehicleLocation[] vehicleUpdates = null;
+            List<VehicleLocation> vehicleUpdates = null;
 
             cacheLocations.OnNext(vehicleUpdates);
         }
@@ -26,7 +27,7 @@ namespace EveryBus.Tests.Services
         {
             var cache = new MemoryCache(new MemoryCacheOptions());
             var cacheLocations = new CacheLocations(cache);
-            VehicleLocation[] vehicleUpdates = new VehicleLocation[]
+            List<VehicleLocation> vehicleUpdates = new List<VehicleLocation>
             {
                 new VehicleLocation(),
             };
@@ -41,7 +42,7 @@ namespace EveryBus.Tests.Services
         {
             var cache = new MemoryCache(new MemoryCacheOptions());
             var cacheLocations = new CacheLocations(cache);
-            VehicleLocation[] vehicleUpdates = new VehicleLocation[]
+            List<VehicleLocation> vehicleUpdates = new List<VehicleLocation>
             {
                 new VehicleLocation(){ VehicleId = "123" },
                 new VehicleLocation(){ VehicleId = "456" },
@@ -58,7 +59,7 @@ namespace EveryBus.Tests.Services
         {
             var cache = new MemoryCache(new MemoryCacheOptions());
             var cacheLocations = new CacheLocations(cache);
-            VehicleLocation[] vehicleUpdates = new VehicleLocation[]
+            List<VehicleLocation> vehicleUpdates = new List<VehicleLocation>
             {
                 new VehicleLocation(){ VehicleId = "123" },
                 new VehicleLocation(){ VehicleId = "456" },

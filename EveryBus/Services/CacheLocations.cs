@@ -1,10 +1,11 @@
 ﻿using EveryBus.Domain.Models;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Collections.Generic;
 
 namespace EveryBus.Services
 {
-    public class CacheLocations : IObserver<VehicleLocation[]>
+    public class CacheLocations : IObserver<List<VehicleLocation>>
     {
         private readonly IMemoryCache cache;
 
@@ -23,7 +24,7 @@ namespace EveryBus.Services
             throw new NotImplementedException();
         }
 
-        public void OnNext(VehicleLocation[] vehicleUpdates)
+        public void OnNext(List<VehicleLocation> vehicleUpdates)
         {
             if (vehicleUpdates == null)
             {

@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
 {
-    public class PersistLocations : IObserver<VehicleLocation[]>
+    public class PersistLocations : IObserver<List<VehicleLocation>>
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly BusLocationsProvider _busLocationsProvider;
@@ -33,7 +33,7 @@ namespace EveryBus.Services
             //
         }
 
-        public void OnNext(VehicleLocation[] vehicleUpdates)
+        public void OnNext(List<VehicleLocation> vehicleUpdates)
         {
             if (vehicleUpdates == null){
                 return;
