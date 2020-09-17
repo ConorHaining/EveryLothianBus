@@ -34,14 +34,15 @@ namespace EveryBus
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
             {
                 builder.WithOrigins(
-                        "http://127.0.0.1",
-                        "localhost",
                         "https://*.azurestaticapps.net"
                      )
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
                     .SetIsOriginAllowedToAllowWildcardSubdomains();
+
+                builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
+                builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "127.0.0.1");
             }));
 
             services.AddControllers().AddJsonOptions(options =>
