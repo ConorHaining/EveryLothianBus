@@ -22,7 +22,7 @@ jobs:
     - uses: actions/setup-dotnet@v1
 
     - name: Run tests
-      run: dotnet test .\EveryBus.sln
+      run: dotnet test ./EveryBus.sln
 
     - name: Build container image (Azure)
       run: docker build -t chaining/everybus:azure .
