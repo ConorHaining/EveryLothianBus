@@ -34,8 +34,8 @@ namespace EveryBus
             services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
             {
                 builder.WithOrigins(
-                        "http://127.0.0.1:8081",
-                        "http://127.0.0.1:4200",
+                        "http://127.0.0.1",
+                        "localhost",
                         "https://*.azurestaticapps.net"
                      )
                     .AllowAnyMethod()
