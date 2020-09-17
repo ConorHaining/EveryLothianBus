@@ -434,3 +434,4 @@ $RECYCLE.BIN/
 
 # Production Docker File
 docker-compose.prod.yml
+/EveryBusTests/Services/StopsServiceTests.cs
