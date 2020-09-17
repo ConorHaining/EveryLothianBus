@@ -6,6 +6,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <StartupObject>EveryBus.Program</StartupObject>
     <ApplicationInsightsResourceId>/subscriptions/8aeff789-4eb1-419c-957d-5a29f8ee9d8d/resourceGroups/everybus/providers/microsoft.insights/components/everybus-monitor</ApplicationInsightsResourceId>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
