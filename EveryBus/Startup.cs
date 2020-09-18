@@ -39,15 +39,14 @@ namespace EveryBus
                 options => options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins(
-                            "https://*.azurestaticapps.net"
-                         )
+                        builder
                         .AllowAnyMethod()
                         .WithHeaders("accept", "content-type", "origin")
                         .AllowCredentials()
                         .SetIsOriginAllowedToAllowWildcardSubdomains()
-                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "127.0.0.1");
+                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost"
+                                                      || new Uri(origin).Host == "127.0.0.1"
+                                                      || new Uri(origin).Host == "azurestaticapps.net");
                     }
                 )
             );
