@@ -99,7 +99,7 @@ namespace EveryBus
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCors("OpenPolicy");
+            app.UseCors();
 
             app.UseRouting();
 
