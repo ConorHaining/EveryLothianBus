@@ -43,7 +43,7 @@ namespace EveryBus
                             "https://*.azurestaticapps.net"
                          )
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
+                        .WithHeaders("accept", "content-type", "origin")
                         .AllowCredentials()
                         .SetIsOriginAllowedToAllowWildcardSubdomains()
                         .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
