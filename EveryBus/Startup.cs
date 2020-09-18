@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
@@ -13,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
+using System;
+using System.Collections.Generic;
 
 namespace EveryBus
 {
@@ -31,19 +31,26 @@ namespace EveryBus
             // services.AddLetsEncrypt().PersistDataToDirectory(new DirectoryInfo("/ssl/"), null);
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
-            services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
-            {
-                builder.WithOrigins(
-                        "https://*.azurestaticapps.net"
-                     )
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-                    .SetIsOriginAllowedToAllowWildcardSubdomains();
+            //services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
+            //{
 
-                builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
-                builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "127.0.0.1");
-            }));
+            //}));
+            services.AddCors(
+                options => options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins(
+                            "https://*.azurestaticapps.net"
+                         )
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()
+                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "127.0.0.1");
+                    }
+                )
+            );
 
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -67,8 +74,9 @@ namespace EveryBus
             services.AddSingleton<IStopsService, StopsService>();
 
             services.AddMemoryCache();
-            
-            services.AddDbContextPool<BusContext>(options => {
+
+            services.AddDbContextPool<BusContext>(options =>
+            {
                 options.UseSqlServer(Configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             });
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
@@ -103,7 +111,7 @@ namespace EveryBus
                 endpoints.MapControllers();
                 endpoints.MapHub<BusHub>("/busHub");
             });
-            
+
             busContext.Database.Migrate();
         }
     }
