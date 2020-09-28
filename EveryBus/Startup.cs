@@ -44,16 +44,18 @@ namespace EveryBus
                         .WithHeaders("accept", "content-type", "origin")
                         .AllowCredentials()
                         .SetIsOriginAllowedToAllowWildcardSubdomains()
-                        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost"
-                                                      || new Uri(origin).Host == "127.0.0.1"
-                                                      || new Uri(origin).Host == "azurestaticapps.net");
+                        .WithOrigins(
+                            "localhost",
+                            "127.0.0.1",
+                            "azurestaticapps.net",
+                            "glitch.me"
+                            );
                     }
                 )
             );
 
-            services.AddControllers().AddJsonOptions(options =>
-            {
-            });
+            services.AddControllers();
+
             services.AddHttpClient("polling", client => { })
             .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(
                handledEventsAllowedBeforeBreaking: 3,
