@@ -12,7 +12,7 @@ namespace EveryBus.Domain
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<VehicleLocation>()
-                .HasIndex(m => m.LastGpsFix);
+                .HasKey(x => new { x.Id, x.ReportTime });
 
             modelBuilder.Entity<RouteStop>()
                 .HasKey(x => new { x.Order, x.RouteId, x.StopId });

@@ -1,3 +1,4 @@
+using EveryBus.Domain.Converters;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -13,7 +14,8 @@ namespace EveryBus.Domain.Models
         public string VehicleId { get; set; }
 
         [JsonPropertyName("last_gps_fix")]
-        public int LastGpsFix { get; set; }
+        [JsonConverter(typeof(UnixToDateTimeConverter))]
+        public DateTime ReportTime { get; set; }
 
         [JsonPropertyName("latitude")]
         public double Latitude { get; set; }

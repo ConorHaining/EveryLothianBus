@@ -69,7 +69,7 @@ namespace EveryBus.Services.Background
             catch (Exception)
             {
                 _logger.LogWarning("Request has been unsucessful.");
-                return default(VehicleLocationResponse);
+                return default;
             }
 
             var jsonOptions = new JsonSerializerOptions

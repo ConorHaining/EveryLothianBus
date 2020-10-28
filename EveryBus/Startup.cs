@@ -78,7 +78,7 @@ namespace EveryBus
 
             services.AddDbContextPool<BusContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
+                options.UseNpgsql(Configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             });
             services.AddTransient<IVehicleLocationsService, VehicleLocationsService>();
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);

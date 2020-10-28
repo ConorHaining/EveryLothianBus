@@ -54,16 +54,15 @@ namespace EveryBus.Services
                     _latest.TryAdd(vehicleId, update);
                 }
 
-                if (update.LastGpsFix > existingRecord?.LastGpsFix && (update.ServiceName != null || update.JourneyId != null))
+                if (update.ReportTime > existingRecord?.ReportTime && (update.ServiceName != null || update.JourneyId != null))
                 {
-                    var timestamp = CreateLocalTimestamp(update);
                     var properties = new Dictionary<string, object>();
                     properties.Add("heading", update.Heading);
                     properties.Add("colour", _routeColourService.Get(update.ServiceName)?.Colour);
                     properties.Add("text_colour", _routeColourService.Get(update.ServiceName)?.TextColor);
                     properties.Add("name", update.ServiceName);
                     properties.Add("vehicleId", update.VehicleId);
-                    properties.Add("last_update", timestamp);
+                    properties.Add("last_update", update.ReportTime);
                     properties.Add("destination", update.Destination);
 
                     var position = new Position(update.Longitude, update.Latitude);
@@ -84,10 +83,5 @@ namespace EveryBus.Services
             unsubscriber.Dispose();
         }
 
-        private DateTime CreateLocalTimestamp(VehicleLocation location)
-        {
-            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
-            return datetime;
-        }
     }
 }
