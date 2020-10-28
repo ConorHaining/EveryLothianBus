@@ -53,7 +53,7 @@ namespace EveryBus.Services
                         _latest.TryAdd(vehicleId, update);
                     }
 
-                    if (update.LastGpsFix > existingRecord?.LastGpsFix)
+                    if (update.ReportTime > existingRecord?.ReportTime)
                     {
                         busContext.VehicleLocations.Add(update);
                         _latest[vehicleId] = update;

@@ -53,7 +53,7 @@ namespace EveryBus.Controller
 
         [HttpGet]
         [Route("historic/{timestamp}")]
-        public IActionResult GetAllLocationsAtTime(int timestamp, [FromQuery]bool activeOnly = true)
+        public IActionResult GetAllLocationsAtTime(DateTimeOffset timestamp, [FromQuery]bool activeOnly = true)
         {
             var locations = _vehicleLocationsService.GetAllLatestLocationsAtTimestamp(timestamp, activeOnly);
 
@@ -77,7 +77,6 @@ namespace EveryBus.Controller
 
         private Dictionary<string, object> CreateGeoJsonProperties(VehicleLocation location)
         {
-            DateTime datetime = CreateLocalTimestamp(location);
 
             var properties = new Dictionary<string, object>();
             properties.Add("heading", location.Heading);
@@ -85,17 +84,10 @@ namespace EveryBus.Controller
             properties.Add("text_colour", _routeColourService.Get(location.ServiceName)?.TextColor);
             properties.Add("name", location.ServiceName);
             properties.Add("vehicleId", location.VehicleId);
-            properties.Add("last_update", datetime.ToString());
+            properties.Add("last_update", location.ReportTime);
             properties.Add("destination", location.Destination);
             return properties;
         }
 
-        private DateTime CreateLocalTimestamp(VehicleLocation location)
-        {
-            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
-            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
-            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
-            return datetime;
-        }
     }
 }

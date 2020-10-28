@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EveryBus.Migrations
 {
-    public partial class InitalCreate : Migration
+    public partial class InitialTimescaleDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,8 +49,8 @@ namespace EveryBus.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    ReportTime = table.Column<DateTime>(nullable: false),
                     VehicleId = table.Column<string>(nullable: true),
-                    LastGpsFix = table.Column<int>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
                     Longitude = table.Column<double>(nullable: false),
                     Speed = table.Column<int>(nullable: true),
@@ -63,7 +63,7 @@ namespace EveryBus.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VehicleLocations", x => x.Id);
+                    table.PrimaryKey("PK_VehicleLocations", x => new { x.Id, x.ReportTime });
                 });
 
             migrationBuilder.CreateTable(
@@ -151,10 +151,7 @@ namespace EveryBus.Migrations
                 table: "RouteStop",
                 column: "StopId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_VehicleLocations_LastGpsFix",
-                table: "VehicleLocations",
-                column: "LastGpsFix");
+            migrationBuilder.Sql("SELECT create_hypertable('\"VehicleLocations\"', 'ReportTime');");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

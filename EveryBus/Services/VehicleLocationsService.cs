@@ -24,37 +24,32 @@ namespace EveryBus.Services
         {
             return cache.GetOrCreate("vehicles", updates =>
             {
-                var timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-                timestamp = CreateLocalTimestamp(timestamp);
-
-                return GetAllLatestLocationsAtTimestamp(timestamp);
+                return GetAllLatestLocationsAtTimestamp(DateTimeOffset.Now);
             });
         }
 
-        public List<VehicleLocation> GetAllLatestLocationsAtTimestamp(int timestamp, bool activeOnly = true)
+        public List<VehicleLocation> GetAllLatestLocationsAtTimestamp(DateTimeOffset timestamp, bool activeOnly = true)
         {
             using (var scope = _scopeFactory.CreateScope())
             {
                 var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var oneMinuteAgo = (int)DateTimeOffset.FromUnixTimeSeconds(timestamp)
-                    .AddMinutes(-1)
-                    .ToUnixTimeSeconds();
+                var oneMinuteAgo = timestamp.AddMinutes(-1);
 
 
                 var lastMinuteStamps = from x in busContext.VehicleLocations
                                             where (x.ServiceName != null || x.JourneyId != null)
-                                                    && x.LastGpsFix >= oneMinuteAgo && 
-                                                    x.LastGpsFix <= timestamp
+                                                    && x.ReportTime >= oneMinuteAgo && 
+                                                    x.ReportTime <= timestamp
                                             select x;
 
                 var latestTimeStamps = from x in lastMinuteStamps
                                         group x by x.VehicleId into groupedBuses
-                                        select new { VehicleId = groupedBuses.Key, LastGpsFix = groupedBuses.Max(y => y.LastGpsFix)};
+                                        select new { VehicleId = groupedBuses.Key, ReportTime = groupedBuses.Max(y => y.ReportTime) };
 
                 var latestRecords = from x in lastMinuteStamps
                                     join latest in latestTimeStamps
-                                    on new { x1 = x.VehicleId, x2 = x.LastGpsFix } equals new { x1 = latest.VehicleId, x2 = latest.LastGpsFix }
+                                    on new { x1 = x.VehicleId, x2 = x.ReportTime } equals new { x1 = latest.VehicleId, x2 = latest.ReportTime }
                                     select x;
 
                return latestRecords.ToList();
@@ -69,7 +64,7 @@ namespace EveryBus.Services
 
                 var lastestReports = busContext.VehicleLocations
                                         .Where(x => x.VehicleId == VehicleId)
-                                        .OrderByDescending(x => x.LastGpsFix)
+                                        .OrderByDescending(x => x.ReportTime)
                                         .First();
 
                 return lastestReports;
