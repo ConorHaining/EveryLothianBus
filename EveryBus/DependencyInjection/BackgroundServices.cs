@@ -7,7 +7,7 @@ namespace EveryBus.DependencyInjection
     {
         public static IServiceCollection AddBackgroundServices(this IServiceCollection services)
         {
-            services.AddHostedService<LocationFetching>();
+            services.AddHostedService<VehicleTracking>();
             services.AddHostedService<RouteFetching>();
 
             return services;

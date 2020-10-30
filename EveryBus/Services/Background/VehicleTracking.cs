@@ -11,16 +11,16 @@ using Microsoft.Extensions.Logging;
 
 namespace EveryBus.Services.Background
 {
-    public class LocationFetching : BackgroundService
+    public class VehicleTracking : BackgroundService
     {
-        private readonly ILogger<LocationFetching> _logger;
+        private readonly ILogger<VehicleTracking> _logger;
         private readonly IConfiguration _configuration;
         private IEnumerable<IObserver<List<VehicleLocation>>> _observers;
         private readonly HttpClient _httpClient;
         private readonly Uri _pollAddress;
 
-        public LocationFetching(
-            ILogger<LocationFetching> logger,
+        public VehicleTracking(
+            ILogger<VehicleTracking> logger,
             IConfiguration configuration,
             IEnumerable<IObserver<List<VehicleLocation>>> observers,
             IHttpClientFactory _httpClientFactory
