@@ -1,3 +1,4 @@
+using EveryBus.DependencyInjection;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
 using EveryBus.Hubs;
@@ -28,31 +29,11 @@ namespace EveryBus
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddLetsEncrypt().PersistDataToDirectory(new DirectoryInfo("/ssl/"), null);
+
             services.AddRazorPages();
             services.AddSignalR(ops => ops.EnableDetailedErrors = true);
-            //services.AddCors(o => o.AddPolicy("OpenPolicy", builder =>
-            //{
 
-            //}));
-            services.AddCors(
-                options => options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder
-                        .AllowAnyMethod()
-                        .WithHeaders("accept", "content-type", "origin")
-                        .AllowCredentials()
-                        .SetIsOriginAllowedToAllowWildcardSubdomains()
-                        .WithOrigins(
-                            "localhost",
-                            "127.0.0.1",
-                            "azurestaticapps.net",
-                            "glitch.me"
-                            );
-                    }
-                )
-            );
+            services.AddBackgroundServices();
 
             services.AddControllers();
 
@@ -63,13 +44,9 @@ namespace EveryBus
             //    onBreak: Stop the service & time, log, report emergency
             ));
 
-            services.AddHostedService<LocationFetching>();
-            services.AddHostedService<RouteFetching>();
 
-            services.AddSingleton<BusLocationsProvider>();
-            services.AddSingleton<IObserver<List<VehicleLocation>>, PersistLocations>();
-            services.AddSingleton<IObserver<List<VehicleLocation>>, BroadcastLocations>();
-            services.AddSingleton<IObserver<List<VehicleLocation>>, CacheLocations>();
+            services.AddObservers();
+
             services.AddSingleton<IRouteColourService, RouteColourService>();
             services.AddSingleton<IRouteService, RouteService>();
             services.AddSingleton<IStopsService, StopsService>();
@@ -115,5 +92,6 @@ namespace EveryBus
 
             busContext.Database.Migrate();
         }
+    
     }
 }
