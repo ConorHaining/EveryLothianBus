@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using EveryBus.Domain;
 using EveryBus.Domain.Models;
-using EveryBus.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EveryBus.Services
@@ -10,17 +9,13 @@ namespace EveryBus.Services
     public class PersistLocations : IObserver<List<VehicleLocation>>
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly BusLocationsProvider _busLocationsProvider;
         private IDisposable unsubscriber;
-        private readonly Dictionary<String, VehicleLocation> _latest;
+        private readonly Dictionary<string, VehicleLocation> _latest;
 
-        public PersistLocations(IServiceScopeFactory scopeFactory, BusLocationsProvider busLocationsProvider)
+        public PersistLocations(IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
-            _busLocationsProvider = busLocationsProvider;
             _latest = new Dictionary<string, VehicleLocation>();
-
-            // unsubscriber = _busLocationsProvider.Subscribe(this);
         }
 
         public void OnCompleted()

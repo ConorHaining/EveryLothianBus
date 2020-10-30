@@ -14,7 +14,6 @@ namespace EveryBus.Services.Background
     public class LocationFetching : BackgroundService
     {
         private readonly ILogger<LocationFetching> _logger;
-        private readonly BusLocationsProvider _busLocationsProvider;
         private readonly IConfiguration _configuration;
         private IEnumerable<IObserver<List<VehicleLocation>>> _observers;
         private readonly HttpClient _httpClient;
@@ -22,14 +21,12 @@ namespace EveryBus.Services.Background
 
         public LocationFetching(
             ILogger<LocationFetching> logger,
-            BusLocationsProvider busLocationsProvider,
             IConfiguration configuration,
             IEnumerable<IObserver<List<VehicleLocation>>> observers,
             IHttpClientFactory _httpClientFactory
             )
         {
             _logger = logger;
-            _busLocationsProvider = busLocationsProvider;
             _configuration = configuration;
             _observers = observers;
             _httpClient = _httpClientFactory.CreateClient("polling");
