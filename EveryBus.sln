@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EveryBus.Tests", "EveryBusT
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{46EB4353-5E5A-4FB7-9109-1090E8BF041C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Workflow", "Github Workflow", "{6067E09C-FCFF-4679-BE1F-35BF9975879C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\azure.yml = .github\workflows\azure.yml
+		.github\workflows\dockerimage.yml = .github\workflows\dockerimage.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
