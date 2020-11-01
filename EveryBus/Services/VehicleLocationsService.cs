@@ -11,33 +11,30 @@ namespace EveryBus.Services
 {
     public class VehicleLocationsService : IVehicleLocationsService
     {
-        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly BusContext _busContext;
         private readonly IMemoryCache cache;
 
-        public VehicleLocationsService(IServiceScopeFactory scopeFactory, IMemoryCache cache)
+        public VehicleLocationsService(BusContext busContext, IMemoryCache cache)
         {
-            _scopeFactory = scopeFactory;
+            _busContext = busContext;
             this.cache = cache;
         }
 
         public List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true)
         {
-            return cache.GetOrCreate("vehicles", updates =>
-            {
+            //return cache.GetOrCreate("vehicles", updates =>
+            //{
                 return GetAllLatestLocationsAtTimestamp(DateTimeOffset.Now);
-            });
+            //});
         }
 
         public List<VehicleLocation> GetAllLatestLocationsAtTimestamp(DateTimeOffset timestamp, bool activeOnly = true)
         {
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var oneMinuteAgo = timestamp.AddMinutes(-1);
+                var oneMinuteAgo = timestamp.AddMinutes(-5);
 
 
-                var lastMinuteStamps = from x in busContext.VehicleLocations
+                var lastMinuteStamps = from x in _busContext.VehicleLocations
                                             where (x.ServiceName != null || x.JourneyId != null)
                                                     && x.ReportTime >= oneMinuteAgo && 
                                                     x.ReportTime <= timestamp
@@ -53,31 +50,19 @@ namespace EveryBus.Services
                                     select x;
 
                return latestRecords.ToList();
-            }
         }
 
         public VehicleLocation GetSpecificLatestLocation(string VehicleId)
         {
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                var busContext = scope.ServiceProvider.GetRequiredService<BusContext>();
 
-                var lastestReports = busContext.VehicleLocations
+
+                var lastestReports = _busContext.VehicleLocations
                                         .Where(x => x.VehicleId == VehicleId)
                                         .OrderByDescending(x => x.ReportTime)
                                         .First();
 
                 return lastestReports;
-            }
-        }
 
-        private int CreateLocalTimestamp(int timestamp)
-        {
-            var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
-            var datetime = DateTime.UnixEpoch.AddSeconds(timestamp);
-            datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
-            var offset = new DateTimeOffset(datetime);
-            return (int)offset.ToUnixTimeSeconds();
         }
     }
 }

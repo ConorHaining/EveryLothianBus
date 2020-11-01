@@ -10,9 +10,8 @@ namespace EveryBus.DependencyInjection
     {
         public static IServiceCollection AddObservers(this IServiceCollection services)
         {
-            services.AddSingleton<IObserver<List<VehicleLocation>>, PersistLocations>();
-            services.AddSingleton<IObserver<List<VehicleLocation>>, BroadcastLocations>();
-            services.AddSingleton<IObserver<List<VehicleLocation>>, CacheLocations>();
+            services.AddScoped<IObserver<List<VehicleLocation>>, PersistLocations>();
+            services.AddScoped<IObserver<List<VehicleLocation>>, BroadcastLocations>();
 
             return services;
         }

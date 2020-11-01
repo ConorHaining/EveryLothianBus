@@ -1,50 +1,68 @@
+using EveryBus.Domain.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using EveryBus.Domain.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace EveryBus.Services.Background
 {
-    public class VehicleTracking : BackgroundService
+    public class VehicleTracking : IHostedService
     {
         private readonly ILogger<VehicleTracking> _logger;
         private readonly IConfiguration _configuration;
-        private IEnumerable<IObserver<List<VehicleLocation>>> _observers;
+
         private readonly HttpClient _httpClient;
         private readonly Uri _pollAddress;
+
+        public IServiceProvider Services { get; }
+
+        private Task _executingTask;
 
         public VehicleTracking(
             ILogger<VehicleTracking> logger,
             IConfiguration configuration,
-            IEnumerable<IObserver<List<VehicleLocation>>> observers,
-            IHttpClientFactory _httpClientFactory
+            IHttpClientFactory _httpClientFactory,
+            IServiceProvider services
             )
         {
             _logger = logger;
             _configuration = configuration;
-            _observers = observers;
+            Services = services;
             _httpClient = _httpClientFactory.CreateClient("polling");
             _pollAddress = _configuration.GetValue<Uri>("tfeopendata:address");
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"{nameof(VehicleTracking)} is starting.");
+            _executingTask = ExecuteAsync(cancellationToken);
+
+            if (_executingTask.IsCompleted)
+            {
+                _logger.LogInformation($"{nameof(VehicleTracking)} was cancelled.");
+                return _executingTask;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public async Task ExecuteAsync(CancellationToken cancellationToken)
         {
             var pollInterval = _configuration.GetValue<long>("tfeopendata:pollInterval", 15000);
-            _logger.LogInformation("LocationFetching is starting.");
-
-            stoppingToken.Register(() => _logger.LogDebug("LocationFetching is stopping."));
-
-            while (!stoppingToken.IsCancellationRequested)
+            
+            using var scope = Services.CreateScope();
+            var observers = scope.ServiceProvider.GetRequiredService<IEnumerable<IObserver<List<VehicleLocation>>>>();
+            while (!cancellationToken.IsCancellationRequested)
             {
                 var vehicleUpdatesResponse = await PollAsync();
 
-                foreach (var observer in _observers)
+                foreach (var observer in observers)
                 {
                     observer.OnNext(vehicleUpdatesResponse?.vehicleLocations);
                 }
@@ -53,9 +71,10 @@ namespace EveryBus.Services.Background
             }
 
         }
+
         private async Task<VehicleLocationResponse> PollAsync()
         {
-            _logger.LogInformation("Request raised at {0}.", DateTime.Now);
+            _logger.LogDebug("Request raised.");
 
             HttpResponseMessage result;
             try
@@ -80,5 +99,15 @@ namespace EveryBus.Services.Background
             return vehicleUpdatesResponse;
         }
 
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            if (_executingTask == null)
+            {
+                return;
+            }
+
+            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+        }
     }
 }

@@ -53,7 +53,7 @@ namespace EveryBus
 
             services.AddMemoryCache();
 
-            services.AddDbContextPool<BusContext>(options =>
+            services.AddDbContext<BusContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
             });
