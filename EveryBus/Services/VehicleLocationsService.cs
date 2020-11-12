@@ -35,11 +35,9 @@ namespace EveryBus.Services
         {
             var fiveMintuesAgo = timestamp.AddMinutes(-5);
 
-            return _busContext.VehicleLocations.FromSqlRaw(
-                "SELECT DISTINCT ON(\"VehicleId\") * FROM \"VehicleLocations\" WHERE \"ReportTime\" BETWEEN CAST('{0}' AS TIMESTAMP) AND CAST('{1}' AS TIMESTAMP) ORDER BY \"VehicleId\", \"ReportTime\" DESC",
-                fiveMintuesAgo,
-                timestamp)
-                .ToList();
+            FormattableString query = $"SELECT DISTINCT ON(\"VehicleId\") * FROM \"VehicleLocations\" WHERE \"ReportTime\" BETWEEN CAST('{fiveMintuesAgo}' AS TIMESTAMP) AND CAST('{timestamp}' AS TIMESTAMP) ORDER BY \"VehicleId\", \"ReportTime\" DESC";
+
+            return _busContext.VehicleLocations.FromSqlRaw(query.ToString()).ToList();
         }
 
         public VehicleLocation GetSpecificLatestLocation(string VehicleId)
