@@ -53,7 +53,7 @@ namespace EveryBus.Controller
 
         [HttpGet]
         [Route("historic/{timestamp}")]
-        public IActionResult GetAllLocationsAtTime(DateTimeOffset timestamp, [FromQuery]bool activeOnly = true)
+        public IActionResult GetAllLocationsAtTime(DateTime timestamp, [FromQuery]bool activeOnly = true)
         {
             var locations = _vehicleLocationsService.GetAllLatestLocationsAtTimestamp(timestamp, activeOnly);
 

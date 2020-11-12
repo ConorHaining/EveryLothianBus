@@ -7,7 +7,7 @@ namespace EveryBus.Services.Interfaces
     public interface IVehicleLocationsService
     {
         List<VehicleLocation> GetAllLatestLocations(bool activeOnly = true);
-        List<VehicleLocation> GetAllLatestLocationsAtTimestamp(DateTimeOffset timestamp, bool activeOnly = true);
+        List<VehicleLocation> GetAllLatestLocationsAtTimestamp(DateTime timestamp, bool activeOnly = true);
         VehicleLocation GetSpecificLatestLocation(string VehicleId);
     }
 }
