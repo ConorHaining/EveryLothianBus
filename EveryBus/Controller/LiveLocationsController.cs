@@ -84,7 +84,7 @@ namespace EveryBus.Controller
             properties.Add("text_colour", _routeColourService.Get(location.ServiceName)?.TextColor);
             properties.Add("name", location.ServiceName);
             properties.Add("vehicleId", location.VehicleId);
-            properties.Add("last_update", location.ReportTime);
+            properties.Add("last_update", location.ReportTime.AddMinutes(1));
             properties.Add("destination", location.Destination);
             return properties;
         }
