@@ -27,7 +27,7 @@ namespace EveryBus.Services
         {
             //return cache.GetOrCreate("vehicles", updates =>
             //{
-            return GetAllLatestLocationsAtTimestamp(DateTime.Now);
+            return GetAllLatestLocationsAtTimestamp(DateTime.Now.AddMinutes(1));
             //});
         }
 
