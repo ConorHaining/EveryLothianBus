@@ -93,7 +93,7 @@ namespace EveryBus.Controller
         private DateTime CreateLocalTimestamp(VehicleLocation location)
         {
             var ukTimezone = TimeZoneInfo.FindSystemTimeZoneById("Europe/London");
-            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix);
+            var datetime = DateTime.UnixEpoch.AddSeconds(location.LastGpsFix).AddMinutes(1);
             datetime = TimeZoneInfo.ConvertTimeFromUtc(datetime, ukTimezone);
             return datetime;
         }
